@@ -23,16 +23,6 @@ function connectToDatabase (uri) {
   return MongoClient.connect(uri)
   .then(client => { cachedDb = client.db(dbName); return cachedDb; });
 
-  // return MongoClient.connect(uri)
- 
-    // .then(db => {
-
-    //   cachedDb = db;
-
-    //   return cachedDb;
-
-    // });
-
 }
 
 
@@ -40,7 +30,7 @@ function queryDatabase (db) {
   console.log('=> query database');
 
   return db.collection('users').find({}).toArray()
-    .then(() => { return { statusCode: 200, body: 'success' }; })
+    .then((responseBody) => { return { statusCode: 200, body: JSON.stringify(responseBody) }; })
     .catch(err => {
       console.log('=> an error occurred: ', err);
       return { statusCode: 500, body: 'error' };
