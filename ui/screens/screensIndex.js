@@ -1,3 +1,3 @@
-export { LinksScreen } from './LinksScreen';
-export { DiscoverScreen } from './DiscoverScreen';
-export { SettingsScreen } from './SettingsScreen';
+export { DiscoverScreen } from "./DiscoverScreen";
+export { SettingsScreen } from "./SettingsScreen";
+export { LoginScreen } from "./LoginScreen";

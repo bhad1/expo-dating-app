@@ -1,24 +1,40 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Switch } from 'react-native-base-switch';
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import { Container, Header, Content, ListItem, Text, Radio, Right, Left } from 'native-base';
+import React from "react";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { Switch } from "react-native-base-switch";
+import MultiSlider from "@ptomasroos/react-native-multi-slider";
+import {
+  Container,
+  Header,
+  Content,
+  ListItem,
+  Text,
+  Radio,
+  Right,
+  Left,
+  Button
+} from "native-base";
+import * as firebase from "firebase";
+import { withNavigation } from "react-navigation";
 
-export default class SettingsScreen extends React.Component {
+class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       sliderOneChanging: false,
       sliderOneValue: 18,
       sliderTwoValue: 24,
-      genderShownSelection: 'Women'
+      genderShownSelection: "Women"
     };
-    this.SliderOneValuesChangeStart = this.SliderOneValuesChangeStart.bind(this);
+    this.SliderOneValuesChangeStart = this.SliderOneValuesChangeStart.bind(
+      this
+    );
     this.SliderOneValuesChange = this.SliderOneValuesChange.bind(this);
-    this.SliderOneValuesChangeFinish = this.SliderOneValuesChangeFinish.bind(this);
+    this.SliderOneValuesChangeFinish = this.SliderOneValuesChangeFinish.bind(
+      this
+    );
   }
   static navigationOptions = {
-    title: 'Settings'
+    title: "Settings"
   };
 
   onToggleSwitch(isActive) {
@@ -44,6 +60,18 @@ export default class SettingsScreen extends React.Component {
     });
   }
 
+  logOut = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        this.props.navigation.navigate("Login");
+      })
+      .catch(error => {
+        alert(error);
+      });
+  };
+
   render() {
     /* Go ahead and delete ExpoConfigView and replace it with your
      * content, we just wanted to give you a quick view of your config */
@@ -62,8 +90,8 @@ export default class SettingsScreen extends React.Component {
         <View style={styles.toggleSwitchDescriptionSection}>
           <View style={styles.toggleSwitchDescriptionContainer}>
             <Text style={styles.toggleSwitchDescription}>
-              Switching your public profile off makes you hidden to anybody new matching with you,
-              but does not hide you from your current matches
+              Switching your public profile off makes you hidden to anybody new
+              matching with you, but does not hide you from your current matches
             </Text>
           </View>
         </View>
@@ -100,40 +128,56 @@ export default class SettingsScreen extends React.Component {
               <Text style={styles.showGenderIndicatorText}>Show</Text>
             </View>
             <View style={styles.showGenderIndicatorValueContainer}>
-              <Text style={styles.showGenderIndicatorValue}>{this.state.genderShownSelection}</Text>
+              <Text style={styles.showGenderIndicatorValue}>
+                {this.state.genderShownSelection}
+              </Text>
             </View>
           </View>
           <Container>
             <Content>
-              <ListItem onPress={() => this.setState({ genderShownSelection: 'Men' })}>
+              <ListItem
+                onPress={() => this.setState({ genderShownSelection: "Men" })}
+              >
                 <Left>
                   <Text>Men</Text>
                 </Left>
                 <Right>
                   <TouchableOpacity>
-                    <Radio selected={this.state.genderShownSelection == 'Men'} />
+                    <Radio
+                      selected={this.state.genderShownSelection == "Men"}
+                    />
                   </TouchableOpacity>
                 </Right>
               </ListItem>
-              <ListItem onPress={() => this.setState({ genderShownSelection: 'Women' })}>
+              <ListItem
+                onPress={() => this.setState({ genderShownSelection: "Women" })}
+              >
                 <Left>
                   <Text>Women</Text>
                 </Left>
                 <Right>
                   <TouchableOpacity>
-                    <Radio selected={this.state.genderShownSelection == 'Women'} />
+                    <Radio
+                      selected={this.state.genderShownSelection == "Women"}
+                    />
                   </TouchableOpacity>
                 </Right>
               </ListItem>
-              <ListItem onPress={() => this.setState({ genderShownSelection: 'Everyone' })}>
+              <ListItem
+                onPress={() =>
+                  this.setState({ genderShownSelection: "Everyone" })
+                }
+              >
                 <Left>
                   <Text>Everyone</Text>
                 </Left>
                 <Right>
                   <TouchableOpacity>
                     <Radio
-                      onPress={() => this.setState({ genderShownSelection: 'Everyone' })}
-                      selected={this.state.genderShownSelection == 'Everyone'}
+                      onPress={() =>
+                        this.setState({ genderShownSelection: "Everyone" })
+                      }
+                      selected={this.state.genderShownSelection == "Everyone"}
                     />
                   </TouchableOpacity>
                 </Right>
@@ -141,31 +185,42 @@ export default class SettingsScreen extends React.Component {
             </Content>
           </Container>
         </View>
+        <Button
+          style={styles.logoutButton}
+          full
+          rounded
+          danger
+          onPress={() => this.logOut()}
+        >
+          <Text>Sign Out</Text>
+        </Button>
       </View>
     );
   }
 }
 
+export default withNavigation(SettingsScreen);
+
 const styles = StyleSheet.create({
   toggleSwitchSection: {
     marginTop: 40,
     height: 70,
-    width: '100%',
-    backgroundColor: '#fff',
-    display: 'flex',
-    flexDirection: 'row'
+    width: "100%",
+    backgroundColor: "#fff",
+    display: "flex",
+    flexDirection: "row"
   },
   toggleSwitchTextContainer: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'center'
+    alignItems: "flex-start",
+    justifyContent: "center"
   },
   toggleSwitchContainer: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center'
+    alignItems: "flex-end",
+    justifyContent: "center"
   },
   toggleSwitchText: {
     paddingLeft: 20,
@@ -177,33 +232,33 @@ const styles = StyleSheet.create({
   ageSliderSection: {
     marginTop: 5,
     height: 110,
-    width: '100%',
-    backgroundColor: '#fff',
-    display: 'flex'
+    width: "100%",
+    backgroundColor: "#fff",
+    display: "flex"
   },
   ageTextSection: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     flex: 1
   },
   ageSliderContainer: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
+    alignItems: "center",
+    justifyContent: "center"
   },
   ageSlider: {},
   ageTextContainer: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'center'
+    alignItems: "flex-start",
+    justifyContent: "center"
   },
   ageValuesContainer: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center'
+    alignItems: "flex-end",
+    justifyContent: "center"
   },
   ageText: {
     paddingLeft: 20,
@@ -216,38 +271,42 @@ const styles = StyleSheet.create({
   showGenderSection: {
     marginTop: 40,
     height: 175,
-    width: '100%',
-    backgroundColor: '#f8c536'
+    width: "100%",
+    backgroundColor: "#f8c536"
   },
   showGenderIndicatorSection: {
     height: 40,
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row'
+    width: "100%",
+    display: "flex",
+    flexDirection: "row"
   },
   showGenderIndicatorValueContainer: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    alignItems: 'flex-end',
-    justifyContent: 'center'
+    alignItems: "flex-end",
+    justifyContent: "center"
   },
   showGenderIndicatorValue: {
     fontSize: 19,
     paddingRight: 20,
-    color: '#fff'
+    color: "#fff"
   },
   showGenderIndicatorTextContainer: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'center'
+    alignItems: "flex-start",
+    justifyContent: "center"
   },
   showGenderIndicatorText: {
     fontSize: 19,
     paddingLeft: 20,
-    color: '#fff'
+    color: "#fff"
   },
   toggleSwitchDescription: {
     padding: 10
+  },
+  logoutButton: {
+    marginTop: 60,
+    height: 50
   }
 });

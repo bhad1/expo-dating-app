@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Image,
   Platform,
@@ -8,16 +8,31 @@ import {
   TouchableOpacity,
   View,
   Button
-} from 'react-native';
-import { WebBrowser } from 'expo';
-import SwiperComponent from '../components/SwiperComponent';
-import { MonoText } from '../components/StyledText';
-import profileImage1 from '../assets/images/stockProfileImages/profileImage1.jpg';
+} from "react-native";
+import { WebBrowser } from "expo";
+import SwiperComponent from "../components/SwiperComponent";
+import { MonoText } from "../components/StyledText";
+import profileImage1 from "../assets/images/stockProfileImages/profileImage1.jpg";
 // import profileImage2 from '../assets/images/stockProfileImages/profileImage2.jpg';
-import profileImage3 from '../assets/images/stockProfileImages/profileImage3.jpg';
-import profileImage4 from '../assets/images/stockProfileImages/profileImage4.jpg';
-import profileImage5 from '../assets/images/stockProfileImages/profileImage5.jpg';
-import profileImage6 from '../assets/images/stockProfileImages/profileImage6.jpg';
+import profileImage3 from "../assets/images/stockProfileImages/profileImage3.jpg";
+import profileImage4 from "../assets/images/stockProfileImages/profileImage4.jpg";
+import profileImage5 from "../assets/images/stockProfileImages/profileImage5.jpg";
+import profileImage6 from "../assets/images/stockProfileImages/profileImage6.jpg";
+
+import * as firebase from "firebase";
+import "firebase/firestore";
+
+var firebaseConfig = {
+  apiKey: "AIzaSyAdv3aRVKWf36ezvtYGfK1NRbReU3zio2U",
+  authDomain: "expo-dating-app-cd762.firebaseapp.com",
+  databaseURL: "https://expo-dating-app-cd762.firebaseio.com",
+  projectId: "expo-dating-app-cd762",
+  storageBucket: "expo-dating-app-cd762.appspot.com",
+  messagingSenderId: "670282659913"
+};
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
 
 console.disableYellowBox = true;
 
@@ -25,32 +40,7 @@ export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      profiles: [
-        {
-          name: 'kathy',
-          profilePictures: [profileImage1]
-        },
-        {
-          name: 'Katie',
-          profilePictures: [profileImage1]
-        },
-        {
-          name: 'Samantha',
-          profilePictures: [profileImage3]
-        },
-        {
-          name: 'Taylor',
-          profilePictures: [profileImage4]
-        },
-        {
-          name: 'Brooke',
-          profilePictures: [profileImage5]
-        },
-        {
-          name: 'Lindsey',
-          profilePictures: [profileImage6]
-        }
-      ]
+      jobs: []
     };
   }
 
@@ -58,10 +48,25 @@ export default class HomeScreen extends React.Component {
     header: null
   };
 
+  async componentDidMount() {
+    let jobsArray = [];
+    await db
+      .collection("jobs")
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          jobsArray.push(doc.data());
+        });
+      });
+    this.setState({
+      jobs: jobsArray
+    });
+  }
+
   render() {
     return (
       <View>
-        <SwiperComponent profiles={this.state.profiles} />
+        <SwiperComponent jobs={this.state.jobs} />
       </View>
     );
   }
@@ -76,8 +81,8 @@ export default class HomeScreen extends React.Component {
 
       return (
         <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
+          Development mode is enabled, your app will be slower but you can use
+          useful development tools. {learnMoreButton}
         </Text>
       );
     } else {
@@ -90,12 +95,14 @@ export default class HomeScreen extends React.Component {
   }
 
   _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
+    WebBrowser.openBrowserAsync(
+      "https://docs.expo.io/versions/latest/guides/development-mode"
+    );
   };
 
   _handleHelpPress = () => {
     WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
+      "https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes"
     );
   };
 }
@@ -103,59 +110,59 @@ export default class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: "#fff"
   },
   developmentModeText: {
     marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
+    color: "rgba(0,0,0,0.4)",
     fontSize: 14,
     lineHeight: 19,
-    textAlign: 'center'
+    textAlign: "center"
   },
   contentContainer: {
     paddingTop: 30
   },
   welcomeContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
     marginBottom: 20
   },
   welcomeImage: {
     width: 100,
     height: 80,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     marginTop: 3,
     marginLeft: -10
   },
   getStartedContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginHorizontal: 50
   },
   homeScreenFilename: {
     marginVertical: 7
   },
   codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)'
+    color: "rgba(96,100,109, 0.8)"
   },
   codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
+    backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 3,
     paddingHorizontal: 4
   },
   getStartedText: {
     fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
+    color: "rgba(96,100,109, 1)",
     lineHeight: 24,
-    textAlign: 'center'
+    textAlign: "center"
   },
   tabBarInfoContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
     ...Platform.select({
       ios: {
-        shadowColor: 'black',
+        shadowColor: "black",
         shadowOffset: { height: -3 },
         shadowOpacity: 0.1,
         shadowRadius: 3
@@ -164,32 +171,32 @@ const styles = StyleSheet.create({
         elevation: 20
       }
     }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
+    alignItems: "center",
+    backgroundColor: "#fbfbfb",
     paddingVertical: 20
   },
   tabBarInfoText: {
     fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center'
+    color: "rgba(96,100,109, 1)",
+    textAlign: "center"
   },
   navigationFilename: {
     marginTop: 5
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: 'center'
+    alignItems: "center"
   },
   helpLink: {
     paddingVertical: 15
   },
   helpLinkText: {
     fontSize: 14,
-    color: '#2e78b7'
+    color: "#2e78b7"
   },
   text: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 50,
-    backgroundColor: 'transparent'
+    backgroundColor: "transparent"
   }
 });
