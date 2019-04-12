@@ -16,8 +16,15 @@ import {
   CheckBox,
   Body
 } from "native-base";
+import Spinner from "react-native-loading-spinner-overlay";
 
-import * as firebase from "firebase";
+import firebase from "firebase";
+// import functions from "firebase-functions";
+import "firebase/functions";
+import "firebase/firestore";
+
+const db = firebase.firestore();
+const firebaseFunctions = firebase.functions();
 
 export default class SignupScreen extends React.Component {
   constructor(props) {
@@ -27,31 +34,90 @@ export default class SignupScreen extends React.Component {
       email: "",
       password: "",
       showToast: false,
-      employer: false
+      isEmployer: false,
+      spinner: false
     };
   }
 
+  // signupUser = (email, password) => {
+  //   firebase
+  //     .auth()
+  //     .createUserWithEmailAndPassword(email, password)
+  //     .then(() => {
+  //       Toast.show({
+  //         text: "You've successfully created an account!",
+  //         buttonText: "Okay"
+  //       });
+  //       this.props.navigation.navigate("Login");
+  //     })
+  //     .catch(function(error) {
+  //       // Handle Errors here.
+  //       var errorCode = error.code;
+  //       var errorMessage = error.message;
+  //       alert(errorMessage);
+  //     });
+  // };
+
+  addEmployerRoleToAuth(userEmail) {
+    firebaseFunctions.httpsCallable("addEmployerRole")({
+      email: userEmail,
+      isEmployer: this.state.isEmployer
+    });
+  }
+
   signupUser = (email, password) => {
+    this.setState({ spinner: true });
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        Toast.show({
-          text: "You've successfully created an account!",
-          buttonText: "Okay"
-        });
-        this.props.navigation.navigate("Login");
+      .then(cred => {
+        return db
+          .collection("users")
+          .doc(cred.user.uid)
+          .set({
+            firstName: "Chad",
+            lastName: "Brookstone",
+            userBio:
+              "Hey, my name is Chad. I wont work unless its over 20 an hour. Needs to be flexible.",
+            isEmployer: this.state.isEmployer
+          });
       })
-      .catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        alert(errorMessage);
+      .then(() => {
+        // have to do setState as a hack to get around a bug
+        this.setState({ spinner: false }, () => {
+          setTimeout(() => {
+            Toast.show({
+              text: "You've successfully created an account!",
+              buttonText: "Okay"
+            });
+            this.backToLogin();
+          }, 100);
+        });
+        this.addEmployerRoleToAuth(email);
+      })
+      .catch(error => {
+        this.setState({ spinner: false }, () => {
+          setTimeout(() => {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            alert(errorMessage);
+          }, 100);
+        });
       });
+  };
+
+  backToLogin = () => {
+    this.props.navigation.navigate("Login");
   };
   render() {
     return (
       <Container style={styles.container}>
+        <Spinner
+          visible={this.state.spinner}
+          textContent={"Loading..."}
+          textStyle={styles.spinnerTextStyle}
+        />
         <Form>
           <Item floatingLabel>
             <Label>Email </Label>
@@ -74,10 +140,16 @@ export default class SignupScreen extends React.Component {
             />
           </Item>
 
-          <ListItem>
+          <ListItem
+            onPress={() =>
+              this.setState({ isEmployer: !this.state.isEmployer })
+            }
+          >
             <CheckBox
-              checked={this.state.employer}
-              onPress={() => this.setState({ employer: !this.state.employer })}
+              checked={this.state.isEmployer}
+              onPress={() =>
+                this.setState({ isEmployer: !this.state.isEmployer })
+              }
             />
             <Body>
               <Text>Are you an employer?</Text>
@@ -95,6 +167,16 @@ export default class SignupScreen extends React.Component {
           >
             <Text>Sign up</Text>
           </Button>
+
+          <Button
+            style={styles.backToLoginButton}
+            full
+            rounded
+            success
+            onPress={() => this.backToLogin()}
+          >
+            <Text>Back to Login</Text>
+          </Button>
         </Form>
       </Container>
     );
@@ -109,5 +191,11 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginTop: 10
+  },
+  backToLoginButton: {
+    marginTop: 30
+  },
+  spinnerTextStyle: {
+    color: "#FFF"
   }
 });

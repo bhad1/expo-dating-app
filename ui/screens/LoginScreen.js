@@ -10,43 +10,99 @@ import {
   Label,
   Button,
   Text,
-  Input
+  Input,
+  Toast
 } from "native-base";
+import Spinner from "react-native-loading-spinner-overlay";
+import { connect } from "react-redux";
+import { setIsEmployer } from "../redux/app-redux";
 
 import * as firebase from "firebase";
 
-export default class LoginScreen extends React.Component {
+const mapStateToProps = state => {
+  return {
+    isEmployer: state.isEmployer
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setIsEmployer: isEmployer => {
+      dispatch(setIsEmployer(isEmployer));
+    }
+  };
+};
+
+class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      email: "hey@hey.com",
-      password: "coolstuff123"
+      email: "emp@emp.com",
+      password: "emp123",
+      spinner: false
     };
   }
 
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        user.getIdTokenResult().then(idTokenResult => {
+          if (idTokenResult.claims.isEmployer) {
+            Toast.show({
+              text: "Employer yay"
+            });
+          } else {
+            Toast.show({
+              text: "Employee"
+            });
+          }
+        });
+      }
+    });
+  }
+
   loginUser = (email, password) => {
+    this.setState({ spinner: true });
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(() => {
-        // alert("Login Successful");
-        this.props.navigation.navigate("Main");
+      .then(async () => {
+        await this.setIsEmployerAuthRedux(this.state.isEmployer);
+        this.setState({ spinner: false }, () => {
+          setTimeout(() => {
+            this.props.navigation.navigate("Main");
+          }, 100);
+        });
       })
-      .catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        alert(errorCode + errorMessage);
+      .catch(error => {
+        this.setState({ spinner: false }, () => {
+          setTimeout(() => {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            alert(errorCode + errorMessage);
+          }, 100);
+        });
       });
+  };
+
+  setIsEmployerAuthRedux = isEmployer => {
+    this.props.setIsEmployer(isEmployer);
   };
 
   signupUser = (email, password) => {
     this.props.navigation.navigate("Signup");
   };
+
   render() {
     return (
       <Container style={styles.container}>
+        <Spinner
+          visible={this.state.spinner}
+          textContent={"Loading..."}
+          textStyle={styles.spinnerTextStyle}
+        />
         <Form>
           <Item floatingLabel>
             <Label>Email </Label>
@@ -81,7 +137,7 @@ export default class LoginScreen extends React.Component {
             <Text>Login</Text>
           </Button>
           <Button
-            style={styles.loginButton}
+            style={styles.toSignupPageButton}
             full
             rounded
             primary
@@ -97,6 +153,11 @@ export default class LoginScreen extends React.Component {
   }
 }
 
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoginScreen);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -104,6 +165,9 @@ const styles = StyleSheet.create({
     padding: 10
   },
   loginButton: {
+    marginTop: 10
+  },
+  toSignupPageButton: {
     marginTop: 10
   }
 });

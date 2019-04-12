@@ -3,6 +3,8 @@ import { Platform, StatusBar, StyleSheet, View } from "react-native";
 import { AppLoading, Asset, Font, Icon } from "expo";
 import AppNavigator from "./navigation/AppNavigator";
 import { Root } from "native-base";
+import { Provider } from "react-redux";
+import { store } from "./redux/app-redux";
 
 import * as firebase from "firebase";
 import firestore from "firebase/firestore";
@@ -34,10 +36,12 @@ export default class App extends React.Component {
     } else {
       return (
         <Root>
-          <View style={styles.container}>
-            {Platform.OS === "ios" && <StatusBar barStyle="default" />}
-            <AppNavigator />
-          </View>
+          <Provider store={store}>
+            <View style={styles.container}>
+              {Platform.OS === "ios" && <StatusBar barStyle="default" />}
+              <AppNavigator />
+            </View>
+          </Provider>
         </Root>
       );
     }

@@ -50,16 +50,18 @@ export default class HomeScreen extends React.Component {
 
   async componentDidMount() {
     let jobsArray = [];
-    await db
-      .collection("jobs")
-      .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
+    await db.collection("jobs").onSnapshot(querySnapshot => {
+      querySnapshot.forEach(
+        function(doc) {
           jobsArray.push(doc.data());
-        });
+        },
+        err => {
+          console.log(err.message);
+        }
+      );
+      this.setState({
+        jobs: jobsArray
       });
-    this.setState({
-      jobs: jobsArray
     });
   }
 
