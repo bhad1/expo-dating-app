@@ -6,12 +6,12 @@ import {
 } from "react-navigation";
 
 import TabBarIcon from "../components/TabBarIcon";
-import EmployeeHomeScreen from "../screens/EmployeeScreens/EmployeeHomeScreen";
-import EmployeeMatchesScreen from "../screens/EmployeeScreens/EmployeeMatchesScreen";
-import EmployeeSettingsScreen from "../screens/EmployeeScreens/EmployeeSettingsScreen";
+import HomeScreen from "../screens/HomeScreen";
+import MatchesScreen from "../screens/MatchesScreen";
+import EmployerSettingsScreen from "../screens/EmployerScreens/EmployerSettingsScreen";
 
 const HomeStack = createStackNavigator({
-  Home: EmployeeHomeScreen
+  Home: HomeScreen
 });
 
 HomeStack.navigationOptions = {
@@ -29,7 +29,7 @@ HomeStack.navigationOptions = {
 };
 
 const MatchesStack = createStackNavigator({
-  Matches: EmployeeMatchesScreen
+  Matches: MatchesScreen
 });
 
 MatchesStack.navigationOptions = {
@@ -46,11 +46,11 @@ MatchesStack.navigationOptions = {
   )
 };
 
-const EmployeeSettingsStack = createStackNavigator({
-  Settings: EmployeeSettingsScreen
+const SettingsStack = createStackNavigator({
+  Settings: SettingsScreen
 });
 
-EmployeeSettingsStack.navigationOptions = {
+SettingsStack.navigationOptions = {
   tabBarLabel: "Settings",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -68,5 +68,5 @@ export default createBottomTabNavigator({
   // DiscoverStack,
   HomeStack,
   MatchesStack,
-  EmployeeSettingsStack
+  SettingsStack
 });

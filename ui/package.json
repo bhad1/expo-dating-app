@@ -28,7 +28,7 @@
     "react-native-parallax-swiper": "^1.1.7",
     "react-native-slider": "^0.11.0",
     "react-native-swiper": "^1.5.14",
-    "react-navigation": "^2.16.0",
+    "react-navigation": "^3.0.7",
     "react-redux": "^6.0.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"

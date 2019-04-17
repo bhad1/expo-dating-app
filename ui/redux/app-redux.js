@@ -2,6 +2,7 @@ import { createStore, applyMiddleware } from "redux";
 import thunkMiddleware from "redux-thunk";
 
 const initialState = {
+  userToken: null,
   isEmployer: false
 };
 
@@ -10,7 +11,9 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "setIsEmployer":
-      return { ...state, setIsEmployer: action.value };
+      return { ...state, isEmployer: action.value };
+    case "setUserToken":
+      return { ...state, userToken: action.value };
     default:
       return state;
   }
@@ -29,3 +32,11 @@ const setIsEmployer = isEmployer => {
   };
 };
 export { setIsEmployer };
+
+const setUserToken = userToken => {
+  return {
+    type: "setUserToken",
+    value: userToken
+  };
+};
+export { setUserToken };

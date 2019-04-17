@@ -39,24 +39,9 @@ export default class SignupScreen extends React.Component {
     };
   }
 
-  // signupUser = (email, password) => {
-  //   firebase
-  //     .auth()
-  //     .createUserWithEmailAndPassword(email, password)
-  //     .then(() => {
-  //       Toast.show({
-  //         text: "You've successfully created an account!",
-  //         buttonText: "Okay"
-  //       });
-  //       this.props.navigation.navigate("Login");
-  //     })
-  //     .catch(function(error) {
-  //       // Handle Errors here.
-  //       var errorCode = error.code;
-  //       var errorMessage = error.message;
-  //       alert(errorMessage);
-  //     });
-  // };
+  static navigationOptions = {
+    header: null
+  };
 
   addEmployerRoleToAuth(userEmail) {
     firebaseFunctions.httpsCallable("addEmployerRole")({
@@ -113,11 +98,11 @@ export default class SignupScreen extends React.Component {
   render() {
     return (
       <Container style={styles.container}>
-        <Spinner
+        {/* <Spinner
           visible={this.state.spinner}
           textContent={"Loading..."}
           textStyle={styles.spinnerTextStyle}
-        />
+        /> */}
         <Form>
           <Item floatingLabel>
             <Label>Email </Label>

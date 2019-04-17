@@ -21,13 +21,6 @@ import {
 } from "react-native-parallax-swiper";
 const { width, height } = Dimensions.get("window");
 
-import profileImage1 from "../assets/images/stockProfileImages/profileImage1.jpg";
-import profileImage2 from "../assets/images/stockProfileImages/profileImage2.png";
-import profileImage3 from "../assets/images/stockProfileImages/profileImage3.jpg";
-import profileImage4 from "../assets/images/stockProfileImages/profileImage4.jpg";
-import profileImage5 from "../assets/images/stockProfileImages/profileImage5.jpg";
-import profileImage6 from "../assets/images/stockProfileImages/profileImage6.jpg";
-
 export default class SwiperComponent extends React.Component {
   static navigationOptions = {
     header: null

@@ -15,19 +15,23 @@ import {
 } from "native-base";
 import Spinner from "react-native-loading-spinner-overlay";
 import { connect } from "react-redux";
+import { setUserToken } from "../redux/app-redux";
 import { setIsEmployer } from "../redux/app-redux";
 
 import * as firebase from "firebase";
 
 const mapStateToProps = state => {
   return {
-    isEmployer: state.isEmployer
+    userToken: state.userToken
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setIsEmployer: isEmployer => {
+    setUserToken: userToken => {
+      dispatch(setUserToken(userToken));
+    },
+    setIsEmployers: isEmployer => {
       dispatch(setIsEmployer(isEmployer));
     }
   };
@@ -40,9 +44,14 @@ class LoginScreen extends React.Component {
     this.state = {
       email: "emp@emp.com",
       password: "emp123",
-      spinner: false
+      spinner: false,
+      userToken: ""
     };
   }
+
+  static navigationOptions = {
+    header: null
+  };
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged(user => {
@@ -57,6 +66,7 @@ class LoginScreen extends React.Component {
               text: "Employee"
             });
           }
+          this.setIsEmployerRedux(idTokenResult.claims.isEmployer);
         });
       }
     });
@@ -67,8 +77,13 @@ class LoginScreen extends React.Component {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(async () => {
-        await this.setIsEmployerAuthRedux(this.state.isEmployer);
+      .then(async user => {
+        user.user.getIdTokenResult().then(idTokenResult => {
+          this.setState({ userToken: idTokenResult.token }, async () => {
+            await this.setUserTokenRedux(this.state.userToken);
+          });
+        });
+
         this.setState({ spinner: false }, () => {
           setTimeout(() => {
             this.props.navigation.navigate("Main");
@@ -87,8 +102,11 @@ class LoginScreen extends React.Component {
       });
   };
 
-  setIsEmployerAuthRedux = isEmployer => {
-    this.props.setIsEmployer(isEmployer);
+  setUserTokenRedux = userToken => {
+    this.props.setUserToken(userToken);
+  };
+  setIsEmployerRedux = isEmployer => {
+    this.props.setIsEmployers(isEmployer);
   };
 
   signupUser = (email, password) => {
@@ -98,11 +116,11 @@ class LoginScreen extends React.Component {
   render() {
     return (
       <Container style={styles.container}>
-        <Spinner
+        {/* <Spinner
           visible={this.state.spinner}
           textContent={"Loading..."}
           textStyle={styles.spinnerTextStyle}
-        />
+        /> */}
         <Form>
           <Item floatingLabel>
             <Label>Email </Label>
