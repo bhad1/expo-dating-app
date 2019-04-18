@@ -10,33 +10,29 @@ import {
   Button
 } from "react-native";
 import { WebBrowser } from "expo";
-import SwiperComponent from "../components/SwiperComponent";
-import { MonoText } from "../components/StyledText";
-import profileImage1 from "../assets/images/stockProfileImages/profileImage1.jpg";
-// import profileImage2 from '../assets/images/stockProfileImages/profileImage2.jpg';
-import profileImage3 from "../assets/images/stockProfileImages/profileImage3.jpg";
-import profileImage4 from "../assets/images/stockProfileImages/profileImage4.jpg";
-import profileImage5 from "../assets/images/stockProfileImages/profileImage5.jpg";
-import profileImage6 from "../assets/images/stockProfileImages/profileImage6.jpg";
+import SwiperComponent from "../../components/SwiperComponent";
+import { MonoText } from "../../components/StyledText";
 
 import * as firebase from "firebase";
 import "firebase/firestore";
 
-var firebaseConfig = {
-  apiKey: "AIzaSyAdv3aRVKWf36ezvtYGfK1NRbReU3zio2U",
-  authDomain: "expo-dating-app-cd762.firebaseapp.com",
-  databaseURL: "https://expo-dating-app-cd762.firebaseio.com",
-  projectId: "expo-dating-app-cd762",
-  storageBucket: "expo-dating-app-cd762.appspot.com",
-  messagingSenderId: "670282659913"
-};
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+  var firebaseConfig = {
+    apiKey: "AIzaSyAdv3aRVKWf36ezvtYGfK1NRbReU3zio2U",
+    authDomain: "expo-dating-app-cd762.firebaseapp.com",
+    databaseURL: "https://expo-dating-app-cd762.firebaseio.com",
+    projectId: "expo-dating-app-cd762",
+    storageBucket: "expo-dating-app-cd762.appspot.com",
+    messagingSenderId: "670282659913"
+  };
+  firebase.initializeApp(firebaseConfig);
+}
 
 const db = firebase.firestore();
 
 console.disableYellowBox = true;
 
-export default class EmployerHomeScreen extends React.Component {
+export default class EmployeeHomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -67,15 +63,46 @@ export default class EmployerHomeScreen extends React.Component {
 
   render() {
     return (
-      <ScrollView>
-        <View>hey</View>
-        <View>hey</View>
-        <View>hey</View>
-        <View>hey</View>
-        <View>hey</View>
-      </ScrollView>
+      <View>
+        <SwiperComponent jobs={this.state.jobs} />
+      </View>
     );
   }
+
+  _maybeRenderDevelopmentModeWarning() {
+    if (__DEV__) {
+      const learnMoreButton = (
+        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
+          Learn more
+        </Text>
+      );
+
+      return (
+        <Text style={styles.developmentModeText}>
+          Development mode is enabled, your app will be slower but you can use
+          useful development tools. {learnMoreButton}
+        </Text>
+      );
+    } else {
+      return (
+        <Text style={styles.developmentModeText}>
+          You are not in development mode, your app will run at full speed.
+        </Text>
+      );
+    }
+  }
+
+  _handleLearnMorePress = () => {
+    WebBrowser.openBrowserAsync(
+      "https://docs.expo.io/versions/latest/guides/development-mode"
+    );
+  };
+
+  _handleHelpPress = () => {
+    WebBrowser.openBrowserAsync(
+      "https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes"
+    );
+  };
 }
 
 const styles = StyleSheet.create({

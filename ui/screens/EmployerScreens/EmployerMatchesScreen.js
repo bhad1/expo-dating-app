@@ -13,8 +13,7 @@ import {
   Text
 } from "native-base";
 
-import profileImage4 from "../assets/images/stockProfileImages/profileImage4.jpg";
-
+import profileImage4 from "../../assets/images/robot-prod.png";
 export default class EmployerMatchesScreen extends React.Component {
   constructor(props) {
     super(props);
