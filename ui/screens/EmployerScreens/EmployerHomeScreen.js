@@ -4,11 +4,10 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
-  View,
-  Button
+  View
 } from "react-native";
+import { Button, Icon, Text } from "native-base";
 import { WebBrowser } from "expo";
 import SwiperComponent from "../../components/SwiperComponent";
 import { MonoText } from "../../components/StyledText";
@@ -32,7 +31,7 @@ const db = firebase.firestore();
 
 console.disableYellowBox = true;
 
-export default class EmployeeHomeScreen extends React.Component {
+export default class EmployerHomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -47,6 +46,7 @@ export default class EmployeeHomeScreen extends React.Component {
   async componentDidMount() {
     let jobsArray = [];
     await db.collection("jobs").onSnapshot(querySnapshot => {
+      jobsArray = [];
       querySnapshot.forEach(
         function(doc) {
           jobsArray.push(doc.data());
@@ -65,6 +65,13 @@ export default class EmployeeHomeScreen extends React.Component {
     return (
       <View>
         <SwiperComponent jobs={this.state.jobs} />
+        <Button
+          onPress={() => this.props.navigation.navigate("CreateJobStack")}
+          style={styles.addJobButton}
+        >
+          <Icon name="home" />
+          <Text>Add Job</Text>
+        </Button>
       </View>
     );
   }
@@ -117,70 +124,6 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     textAlign: "center"
   },
-  contentContainer: {
-    paddingTop: 30
-  },
-  welcomeContainer: {
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 20
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: "contain",
-    marginTop: 3,
-    marginLeft: -10
-  },
-  getStartedContainer: {
-    alignItems: "center",
-    marginHorizontal: 50
-  },
-  homeScreenFilename: {
-    marginVertical: 7
-  },
-  codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
-  },
-  codeHighlightContainer: {
-    backgroundColor: "rgba(0,0,0,0.05)",
-    borderRadius: 3,
-    paddingHorizontal: 4
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: "rgba(96,100,109, 1)",
-    lineHeight: 24,
-    textAlign: "center"
-  },
-  tabBarInfoContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: "black",
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3
-      },
-      android: {
-        elevation: 20
-      }
-    }),
-    alignItems: "center",
-    backgroundColor: "#fbfbfb",
-    paddingVertical: 20
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: "rgba(96,100,109, 1)",
-    textAlign: "center"
-  },
-  navigationFilename: {
-    marginTop: 5
-  },
   helpContainer: {
     marginTop: 15,
     alignItems: "center"
@@ -188,13 +131,14 @@ const styles = StyleSheet.create({
   helpLink: {
     paddingVertical: 15
   },
-  helpLinkText: {
-    fontSize: 14,
-    color: "#2e78b7"
-  },
   text: {
     textAlign: "center",
     fontSize: 50,
     backgroundColor: "transparent"
+  },
+  addJobButton: {
+    position: "absolute",
+    top: 70,
+    right: 10
   }
 });

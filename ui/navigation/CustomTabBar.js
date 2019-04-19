@@ -124,41 +124,6 @@ class CustomTabBar extends React.Component {
             }
           }
 
-          {
-            /* if (isEmployer && route.key === "HomeStack") {
-            return (
-              <Button
-                onPress={() => this.navigationHandler(route.routeName)}
-                style={styles.tabItem}
-                badge
-                vertical
-              >
-                <Badge>
-                  <Text>2</Text>
-                </Badge>
-                <Icon name="home" />
-                <Text>Home</Text>
-              </Button>
-            );
-          } else {
-            return (
-              <Button
-                onPress={() => this.navigationHandler(route.routeName)}
-                style={styles.tabItem}
-                active
-                badge
-                vertical
-              >
-                <Badge>
-                  <Text>51</Text>
-                </Badge>
-                <Icon active name="navigate" />
-                <Text>Navigate</Text>
-              </Button>
-            );
-          } */
-          }
-
           return <View />;
         })}
       </View>

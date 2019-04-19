@@ -12,6 +12,7 @@ import {
 import { WebBrowser } from "expo";
 import SwiperComponent from "../../components/SwiperComponent";
 import { MonoText } from "../../components/StyledText";
+import { connect } from "react-redux";
 
 import * as firebase from "firebase";
 import "firebase/firestore";
@@ -32,12 +33,25 @@ const db = firebase.firestore();
 
 console.disableYellowBox = true;
 
-export default class EmployeeHomeScreen extends React.Component {
+const mapStateToProps = state => {
+  return {
+    isEmployer: state.isEmployer
+  };
+};
+
+class EmployeeHomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       jobs: []
     };
+
+    // there is no way to make it go straight to employer homepage on login
+    // so user is directed here first every time and we check if they are an employer
+    // and send them there or stay accordingly
+    if (this.props.isEmployer) {
+      this.props.navigation.navigate("EmployerHomeStack");
+    }
   }
 
   static navigationOptions = {
@@ -104,6 +118,8 @@ export default class EmployeeHomeScreen extends React.Component {
     );
   };
 }
+
+export default connect(mapStateToProps)(EmployeeHomeScreen);
 
 const styles = StyleSheet.create({
   container: {

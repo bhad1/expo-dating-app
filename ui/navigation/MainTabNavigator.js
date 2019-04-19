@@ -12,6 +12,7 @@ import EmployeeSettingsScreen from "../screens/EmployeeScreens/EmployeeSettingsS
 import EmployerHomeScreen from "../screens/EmployerScreens/EmployerHomeScreen";
 import EmployerMatchesScreen from "../screens/EmployerScreens/EmployerMatchesScreen";
 import EmployerSettingsScreen from "../screens/EmployerScreens/EmployerSettingsScreen";
+import CreateJobScreen from "../screens/EmployerScreens/CreateJobScreen";
 import CustomTabBar from "./CustomTabBar";
 
 //employee screens
@@ -126,6 +127,24 @@ EmployerSettingsStack.navigationOptions = {
   )
 };
 
+const CreateJobStack = createStackNavigator({
+  CreateJob: CreateJobScreen
+});
+
+CreateJobStack.navigationOptions = {
+  tabBarLabel: "Create Job",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === "ios"
+          ? `ios-options${focused ? "" : "-outline"}`
+          : "md-options"
+      }
+    />
+  )
+};
+
 export default createBottomTabNavigator(
   {
     // DiscoverStack,
@@ -134,7 +153,8 @@ export default createBottomTabNavigator(
     EmployeeSettingsStack,
     EmployerHomeStack,
     EmployerMatchesStack,
-    EmployerSettingsStack
+    EmployerSettingsStack,
+    CreateJobStack
   },
   {
     tabBarComponent: CustomTabBar

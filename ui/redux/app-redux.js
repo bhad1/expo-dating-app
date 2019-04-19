@@ -3,7 +3,8 @@ import thunkMiddleware from "redux-thunk";
 
 const initialState = {
   userToken: null,
-  isEmployer: false
+  isEmployer: false,
+  userId: null
 };
 
 // reducer
@@ -14,6 +15,8 @@ const reducer = (state = initialState, action) => {
       return { ...state, isEmployer: action.value };
     case "setUserToken":
       return { ...state, userToken: action.value };
+    case "setUserId":
+      return { ...state, userId: action.value };
     default:
       return state;
   }
@@ -40,3 +43,11 @@ const setUserToken = userToken => {
   };
 };
 export { setUserToken };
+
+const setUserId = userId => {
+  return {
+    type: "setUserId",
+    value: userId
+  };
+};
+export { setUserId };

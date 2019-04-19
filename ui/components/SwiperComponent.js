@@ -46,9 +46,9 @@ export default class SwiperComponent extends React.Component {
               //   </View>
               // </PictureSwiper>
               <View style={styles.card}>
-                <Text>{card.companyName}</Text>
-                <Text>{card.hours}</Text>
-                <Text>{card.jobDescription}</Text>
+                <Text>Company Name: {card.company}</Text>
+                <Text>Hours per Week: {card.weeklyHours}</Text>
+                <Text>Job Description: {card.jobDescription}</Text>
               </View>
             );
           }}

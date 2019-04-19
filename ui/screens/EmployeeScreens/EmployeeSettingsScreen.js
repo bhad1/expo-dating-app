@@ -15,6 +15,7 @@ import {
 } from "native-base";
 import * as firebase from "firebase";
 import { withNavigation } from "react-navigation";
+import { ScrollView } from "react-native-gesture-handler";
 
 class SettingsScreen extends React.Component {
   constructor(props) {
@@ -76,7 +77,7 @@ class SettingsScreen extends React.Component {
     /* Go ahead and delete ExpoConfigView and replace it with your
      * content, we just wanted to give you a quick view of your config */
     return (
-      <View>
+      <ScrollView>
         <View style={styles.toggleSwitchSection}>
           <View style={styles.toggleSwitchTextContainer}>
             <Text style={styles.toggleSwitchText}>Profile Public</Text>
@@ -194,7 +195,7 @@ class SettingsScreen extends React.Component {
         >
           <Text>Sign Out</Text>
         </Button>
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -203,7 +204,7 @@ export default withNavigation(SettingsScreen);
 
 const styles = StyleSheet.create({
   toggleSwitchSection: {
-    marginTop: 40,
+    marginTop: 10,
     height: 70,
     width: "100%",
     backgroundColor: "#fff",
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
     fontSize: 19
   },
   showGenderSection: {
-    marginTop: 40,
+    marginTop: 10,
     height: 175,
     width: "100%",
     backgroundColor: "#f8c536"
@@ -306,7 +307,7 @@ const styles = StyleSheet.create({
     padding: 10
   },
   logoutButton: {
-    marginTop: 60,
+    marginTop: 15,
     height: 50
   }
 });

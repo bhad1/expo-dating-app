@@ -17,6 +17,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { connect } from "react-redux";
 import { setUserToken } from "../redux/app-redux";
 import { setIsEmployer } from "../redux/app-redux";
+import { setUserId } from "../redux/app-redux";
 
 import * as firebase from "firebase";
 
@@ -33,6 +34,9 @@ const mapDispatchToProps = dispatch => {
     },
     setIsEmployers: isEmployer => {
       dispatch(setIsEmployer(isEmployer));
+    },
+    setUserId: userId => {
+      dispatch(setUserId(userId));
     }
   };
 };
@@ -77,11 +81,10 @@ class LoginScreen extends React.Component {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(async user => {
-        user.user.getIdTokenResult().then(idTokenResult => {
-          this.setState({ userToken: idTokenResult.token }, async () => {
-            await this.setUserTokenRedux(this.state.userToken);
-          });
+      .then(user => {
+        user.user.getIdTokenResult().then(async idTokenResult => {
+          await this.setUserTokenRedux(idTokenResult.token);
+          await this.setUserIdRedux(idTokenResult.claims.user_id);
         });
 
         this.setState({ spinner: false }, () => {
@@ -107,6 +110,9 @@ class LoginScreen extends React.Component {
   };
   setIsEmployerRedux = isEmployer => {
     this.props.setIsEmployers(isEmployer);
+  };
+  setUserIdRedux = userId => {
+    this.props.setUserId(userId);
   };
 
   signupUser = (email, password) => {
