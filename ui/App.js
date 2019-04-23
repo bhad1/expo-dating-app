@@ -1,5 +1,12 @@
 import React from "react";
-import { Platform, StatusBar, StyleSheet, View, Linking } from "react-native";
+import {
+  Platform,
+  StatusBar,
+  StyleSheet,
+  View,
+  Linking,
+  AppState
+} from "react-native";
 import {
   AppLoading,
   Asset,
@@ -24,11 +31,13 @@ export default class App extends React.Component {
     isLoadingComplete: false,
     userLocation: null,
     errorMessage: null,
-    isLocationModalVisible: true,
-    openSettings: false
+    isLocationModalVisible: false,
+    openSettings: false,
+    appState: AppState.currentState
   };
 
   componentWillMount() {
+    AppState.addEventListener("change", this._handleAppStateChange);
     if (Platform.OS === "android" && !Constants.isDevice) {
       this.setState({
         errorMessage:
@@ -37,6 +46,10 @@ export default class App extends React.Component {
     } else {
       this._getLocationAsync();
     }
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener("change", this._handleAppStateChange);
   }
 
   render() {
@@ -93,6 +106,18 @@ export default class App extends React.Component {
     this.setState({ openSettings: false });
   };
 
+  // handles when user exits out of app and then comes back, like when they go to change location settings
+  _handleAppStateChange = nextAppState => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
+      console.log("App has come to the foreground!");
+      this._getLocationAsync();
+    }
+    this.setState({ appState: nextAppState });
+  };
+
   _getLocationAsync = async () => {
     try {
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -100,6 +125,7 @@ export default class App extends React.Component {
         this.setState({
           errorMessage: "Permission to access location was denied"
         });
+        return;
       }
 
       let userLocation = await Location.getCurrentPositionAsync({});
