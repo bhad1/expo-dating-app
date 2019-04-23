@@ -37,6 +37,7 @@ export default class App extends React.Component {
   };
 
   componentWillMount() {
+    //listen for when user exits out of app
     AppState.addEventListener("change", this._handleAppStateChange);
     if (Platform.OS === "android" && !Constants.isDevice) {
       this.setState({
