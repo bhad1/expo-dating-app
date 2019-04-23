@@ -20,7 +20,7 @@ import {
 import AppNavigator from "./navigation/AppNavigator";
 import { Root, Button, Text } from "native-base";
 import { Provider } from "react-redux";
-import { store } from "./redux/app-redux";
+import { store, setUserLocation } from "./redux/app-redux";
 import Modal from "react-native-modal";
 
 import * as firebase from "firebase";
@@ -73,19 +73,21 @@ export default class App extends React.Component {
                   this.state.openSettings ? this.openSettings : undefined
                 }
                 isVisible={this.state.isLocationModalVisible}
-                style={styles.userLocationModal}
               >
-                <View>
-                  <Button
-                    onPress={() =>
-                      this.setState({
-                        isLocationModalVisible: false,
-                        openSettings: true
-                      })
-                    }
-                  >
-                    <Text>Enable Location Services</Text>
-                  </Button>
+                <View style={styles.userLocationModal}>
+                  <View style={styles.userLocationModalView}>
+                    <Button
+                      style={styles.enableLocationButton}
+                      onPress={() =>
+                        this.setState({
+                          isLocationModalVisible: false,
+                          openSettings: true
+                        })
+                      }
+                    >
+                      <Text>Enable Location Services</Text>
+                    </Button>
+                  </View>
                 </View>
               </Modal>
               <AppNavigator />
@@ -120,18 +122,23 @@ export default class App extends React.Component {
   };
 
   _getLocationAsync = async () => {
+    // if no try catch then it throws error and breaks app when location permissions not allowed
     try {
+      // get if user has enabled location or not
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      // if they havent, then show modal to make them enable location
       if (status !== "granted") {
         this.setState({
           errorMessage: "Permission to access location was denied"
         });
+        this.setState({ isLocationModalVisible: true });
         return;
       }
 
+      //get user location and store it in redux with store.dispatch
       let userLocation = await Location.getCurrentPositionAsync({});
       await this.setState({ userLocation });
-      console.log(this.state.userLocation);
+      store.dispatch(setUserLocation(userLocation));
     } catch (error) {
       let status = Location.getProviderStatusAsync();
       if (!status.locationServicesEnabled) {
@@ -157,8 +164,6 @@ export default class App extends React.Component {
   };
 
   _handleLoadingError = error => {
-    // In this case, you might want to report the error to your error
-    // reporting service, for example Sentry
     console.warn(error);
   };
 
@@ -172,10 +177,20 @@ const styles = StyleSheet.create({
     flex: 1
   },
   userLocationModal: {
-    height: 300,
-    width: 300,
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  userLocationModalView: {
+    height: "70%",
+    width: "80%",
     backgroundColor: "white",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    borderRadius: 40
+  },
+  enableLocationButton: {
+    width: "100%"
   }
 });
