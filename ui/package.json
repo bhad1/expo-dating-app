@@ -19,19 +19,22 @@
     "firebase": "^5.9.2",
     "firebase-admin": "^7.2.0",
     "firebase-functions": "^2.2.1",
+    "geofirex": "0.0.6",
     "native-base": "2.8.0",
     "react": "16.3.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",
     "react-native-base-switch": "0.0.6",
     "react-native-deck-swiper": "^1.5.26",
     "react-native-loading-spinner-overlay": "^1.0.1",
+    "react-native-modal": "^9.0.0",
     "react-native-parallax-swiper": "^1.1.7",
     "react-native-slider": "^0.11.0",
     "react-native-swiper": "^1.5.14",
     "react-navigation": "^3.0.7",
     "react-redux": "^6.0.0",
     "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "rxjs": "^6.5.1"
   },
   "devDependencies": {
     "jest-expo": "30.0.0"
