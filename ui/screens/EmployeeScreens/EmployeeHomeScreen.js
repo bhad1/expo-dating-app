@@ -13,6 +13,7 @@ import { WebBrowser } from "expo";
 import SwiperComponent from "../../components/SwiperComponent";
 import { MonoText } from "../../components/StyledText";
 import { connect } from "react-redux";
+import { get } from "geofirex";
 
 // import * as firebase from "firebase";
 // import * as geofirex from "geofirex";
@@ -39,7 +40,8 @@ console.disableYellowBox = true;
 
 const mapStateToProps = state => {
   return {
-    isEmployer: state.isEmployer
+    isEmployer: state.isEmployer,
+    userLocation: state.userLocation
   };
 };
 
@@ -63,29 +65,48 @@ class EmployeeHomeScreen extends React.Component {
   };
 
   async componentDidMount() {
-    let jobsArray = [];
-    await db.collection("jobs").onSnapshot(querySnapshot => {
-      querySnapshot.forEach(
-        function(doc) {
-          jobsArray.push(doc.data());
-        },
-        err => {
-          console.log(err.message);
-        }
-      );
-      this.setState({
-        jobs: jobsArray
-      });
-    });
+    if (!this.props.isEmployer) {
+      this.getJobsNearUser();
+    }
+    // query.subscribe(console.log);
+    // await db.collection("jobs").onSnapshot(querySnapshot => {
+    //   querySnapshot.forEach(
+    //     function(doc) {
+    //       jobsArray.push(doc.data());
+    //     },
+    //     err => {
+    //       console.log(err.message);
+    //     }
+    //   );
+    //   this.setState({
+    //     jobs: jobsArray
+    //   });
+    // });
   }
 
   render() {
+    if (this.props.isEmployer) {
+      return <View />;
+    }
     return (
       <View>
         <SwiperComponent jobs={this.state.jobs} />
       </View>
     );
   }
+
+  getJobsNearUser = async () => {
+    let userLatitude = this.props.userLocation.coords.latitude;
+    let userLongitude = this.props.userLocation.coords.longitude;
+    const jobs = geo.collection("jobs");
+    const center = geo.point(userLatitude, userLongitude);
+    const radius = 100;
+    const field = "position";
+
+    const query = jobs.within(center, radius, field);
+    const jobsNearMe = await get(query);
+    this.setState({ jobs: jobsNearMe });
+  };
 
   _maybeRenderDevelopmentModeWarning() {
     if (__DEV__) {

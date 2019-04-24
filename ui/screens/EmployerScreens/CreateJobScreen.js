@@ -68,8 +68,15 @@ class CreateJobsScreen extends React.Component {
 
   addJob = () => {
     this.convertAddressToCoordinates();
-    const point = geo.point(this.state.lat, this.state.lng);
-    db.collection("jobs")
+    // const point = geo.point(this.state.lat, this.state.lng);
+    // seattle coordinates 47.611118, -122.331409
+    // portland coordinates 45.515264, -122.676383
+    // home coordinates 33.753921, -85.311777
+    // greater good bbq coordinates 33.751467, -84.310024
+    // poor hendrix coordinates 33.751037, -84.308759
+    const point = geo.point(33.751037, -84.308759);
+    geo
+      .collection("jobs")
       .add({
         userId: this.props.userId,
         company: this.state.company,
@@ -80,7 +87,7 @@ class CreateJobsScreen extends React.Component {
         city: this.state.city,
         state: this.state.state,
         zipCode: this.state.zipCode,
-        geoLocation: point.data
+        position: point.data
       })
       .then(async docRef => {
         console.log("Document written with ID: ", docRef.id);

@@ -60,11 +60,14 @@ export default class SignupScreen extends React.Component {
           .collection("users")
           .doc(cred.user.uid)
           .set({
-            firstName: "Chad",
-            lastName: "Brookstone",
-            userBio:
-              "Hey, my name is Chad. I wont work unless its over 20 an hour. Needs to be flexible.",
-            isEmployer: this.state.isEmployer
+            firstName: "",
+            userBio: "",
+            settings: {
+              profilePublic: true,
+              sliderOneValue: 22,
+              sliderTwoValue: 34,
+              genderShownSelection: "Men"
+            }
           });
       })
       .then(() => {

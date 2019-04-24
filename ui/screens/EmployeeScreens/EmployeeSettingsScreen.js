@@ -1,6 +1,5 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Switch } from "react-native-base-switch";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import {
   Container,
@@ -11,21 +10,35 @@ import {
   Radio,
   Right,
   Left,
-  Button
+  Button,
+  Switch
 } from "native-base";
 import * as firebase from "firebase";
 import { withNavigation } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
+import { connect } from "react-redux";
+import "firebase/firestore";
+
+const db = firebase.firestore();
+
+const mapStateToProps = state => {
+  return {
+    userId: state.userId
+  };
+};
 
 class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      profilePublic: false,
       sliderOneChanging: false,
-      sliderOneValue: 18,
-      sliderTwoValue: 24,
-      genderShownSelection: "Women"
+      sliderOneValue: 13,
+      sliderTwoValue: 26,
+      genderShownSelection: "Men"
     };
+    this.onToggleSwitch = this.onToggleSwitch.bind(this);
+
     this.SliderOneValuesChangeStart = this.SliderOneValuesChangeStart.bind(
       this
     );
@@ -38,9 +51,47 @@ class SettingsScreen extends React.Component {
     title: "Settings"
   };
 
-  onToggleSwitch(isActive) {
-    console.log(isActive);
+  async componentDidMount() {
+    // await db.collection("jobs").onSnapshot(querySnapshot => {
+    //   querySnapshot.forEach(
+    //     function(doc) {
+    //       jobsArray.push(doc.data());
+    //     },
+    //     err => {
+    //       console.log(err.message);
+    //     }
+    //   );
+    //   this.setState({
+    //     jobs: jobsArray
+    //   });
+    // });
+
+    //get user by userId that we set in redux on login
+    await db
+      .collection("users")
+      .where(firebase.firestore.FieldPath.documentId(), "==", this.props.userId)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(async doc => {
+          let userSettings = doc.data().settings;
+          await this.setState({
+            profilePublic: userSettings.profilePublic,
+            sliderOneValue: userSettings.sliderOneValue,
+            sliderTwoValue: userSettings.sliderTwoValue,
+            genderShownSelection: userSettings.genderShownSelection
+          });
+          console.log(this.state.genderShownSelection);
+        });
+      })
+      .catch(function(error) {
+        console.log("Error getting documents: ", error);
+      });
   }
+
+  onToggleSwitch = () => {
+    this.setState({ profilePublic: !this.state.profilePublic });
+    console.log(this.state.profilePublic);
+  };
 
   SliderOneValuesChangeStart() {
     this.setState({
@@ -74,8 +125,6 @@ class SettingsScreen extends React.Component {
   };
 
   render() {
-    /* Go ahead and delete ExpoConfigView and replace it with your
-     * content, we just wanted to give you a quick view of your config */
     return (
       <ScrollView>
         <View style={styles.toggleSwitchSection}>
@@ -84,7 +133,10 @@ class SettingsScreen extends React.Component {
           </View>
           <View style={styles.toggleSwitchContainer}>
             <View style={styles.toggleSwitch}>
-              <Switch onChangeState={this.onToggleSwitch} />
+              <Switch
+                value={this.state.profilePublic}
+                onValueChange={() => this.onToggleSwitch()}
+              />
             </View>
           </View>
         </View>
@@ -200,7 +252,8 @@ class SettingsScreen extends React.Component {
   }
 }
 
-export default withNavigation(SettingsScreen);
+// export default withNavigation(SettingsScreen);
+export default connect(mapStateToProps)(SettingsScreen);
 
 const styles = StyleSheet.create({
   toggleSwitchSection: {

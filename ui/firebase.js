@@ -1,8 +1,6 @@
-import * as firebase from "firebase";
+import * as firebase from "firebase/app";
 import * as geofirex from "geofirex";
 import "firebase/firestore";
-
-let geo;
 
 if (!firebase.apps.length) {
   var firebaseConfig = {
@@ -14,8 +12,9 @@ if (!firebase.apps.length) {
     messagingSenderId: "670282659913"
   };
   firebase.initializeApp(firebaseConfig);
-  geo = geofirex.init(firebase);
 }
+
+const geo = geofirex.init(firebase);
 
 const db = firebase.firestore();
 
