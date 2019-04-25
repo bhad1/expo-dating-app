@@ -1,9 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, TextInput } from "react-native";
-import { Switch } from "react-native-base-switch";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import { Content, Text, Button, Form, Item, Input, Toast } from "native-base";
-// import * as firebase from "firebase";
 import { withNavigation } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
 import { connect } from "react-redux";
@@ -38,17 +36,33 @@ class CreateJobsScreen extends React.Component {
     title: "Create Job"
   };
 
-  convertAddressToCoordinates = () => {
-    fetch(
-      "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyAEt-n2jaN5mGZpf7sK3g5xAZsoSWL0Z1s"
+  convertAddressToCoordinates = async () => {
+    // 1600+Amphitheatre+Parkway,+Mountain+View,+CA
+    // 1984 Hosea L Williams Dr NE, Atlanta, GA
+    // 2210 Westlake Ave, Seattle, WA 98121
+    combinedAddress =
+      this.state.addressLine1 +
+      ", " +
+      this.state.city +
+      ", " +
+      this.state.state;
+    var combinedAddress = combinedAddress.split(" ").join("+");
+    await fetch(
+      "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+        combinedAddress +
+        "&key=AIzaSyAEt-n2jaN5mGZpf7sK3g5xAZsoSWL0Z1s"
     )
       .then(res => res.json())
-      .then(json =>
-        this.setState({
-          lat: json.results[0].geometry.location.lat,
-          lng: json.results[0].geometry.location.lng
-        })
-      );
+      .then(
+        async json =>
+          await this.setState({
+            lat: json.results[0].geometry.location.lat,
+            lng: json.results[0].geometry.location.lng
+          })
+      )
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   resetState = () => {
@@ -66,15 +80,15 @@ class CreateJobsScreen extends React.Component {
     });
   };
 
-  addJob = () => {
-    this.convertAddressToCoordinates();
+  addJob = async () => {
+    await this.convertAddressToCoordinates();
     // const point = geo.point(this.state.lat, this.state.lng);
     // seattle coordinates 47.611118, -122.331409
     // portland coordinates 45.515264, -122.676383
     // home coordinates 33.753921, -85.311777
     // greater good bbq coordinates 33.751467, -84.310024
     // poor hendrix coordinates 33.751037, -84.308759
-    const point = geo.point(33.751037, -84.308759);
+    const point = geo.point(this.state.lat, this.state.lng);
     geo
       .collection("jobs")
       .add({

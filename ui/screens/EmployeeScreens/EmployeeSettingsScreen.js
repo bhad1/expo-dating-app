@@ -18,6 +18,7 @@ import { withNavigation } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
 import { connect } from "react-redux";
 import "firebase/firestore";
+import AwesomeDebouncePromise from "awesome-debounce-promise";
 
 const db = firebase.firestore();
 
@@ -27,7 +28,7 @@ const mapStateToProps = state => {
   };
 };
 
-class SettingsScreen extends React.Component {
+class EmployeeSettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -37,35 +38,61 @@ class SettingsScreen extends React.Component {
       sliderTwoValue: 0,
       genderShownSelection: "Women"
     };
-    this.onToggleSwitch = this.onToggleSwitch.bind(this);
-
-    this.SliderOneValuesChangeStart = this.SliderOneValuesChangeStart.bind(
-      this
-    );
-    this.SliderOneValuesChange = this.SliderOneValuesChange.bind(this);
-    this.SliderOneValuesChangeFinish = this.SliderOneValuesChangeFinish.bind(
-      this
-    );
   }
   static navigationOptions = {
     title: "Settings"
   };
 
-  async componentDidMount() {
-    // await db.collection("jobs").onSnapshot(querySnapshot => {
-    //   querySnapshot.forEach(
-    //     function(doc) {
-    //       jobsArray.push(doc.data());
-    //     },
-    //     err => {
-    //       console.log(err.message);
-    //     }
-    //   );
-    //   this.setState({
-    //     jobs: jobsArray
-    //   });
-    // });
+  updateProfilePublicApiCall = userId => {
+    db.collection("users")
+      .doc(userId)
+      .update({
+        "settings.profilePublic": this.state.profilePublic
+      })
+      .then(function() {
+        console.log("Profile public value successfully updated!");
+      });
+  };
 
+  updateProfilePublicApiCallDebounced = AwesomeDebouncePromise(
+    this.updateProfilePublicApiCall,
+    2000
+  );
+
+  updateSliderValuesApiCall = (userId, sliderValues) => {
+    db.collection("users")
+      .doc(userId)
+      .update({
+        "settings.sliderOneValue": sliderValues[0],
+        "settings.sliderTwoValue": sliderValues[1]
+      })
+      .then(function() {
+        console.log("Slider values successfully updated!");
+      });
+  };
+
+  updateSliderValuesApiCallDebounced = AwesomeDebouncePromise(
+    this.updateSliderValuesApiCall,
+    2000
+  );
+
+  updateGenderApiCall = userId => {
+    db.collection("users")
+      .doc(userId)
+      .update({
+        "settings.genderShownSelection": this.state.genderShownSelection
+      })
+      .then(function() {
+        console.log("Gender shown successfully updated!");
+      });
+  };
+
+  updateGenderApiCallDebounced = AwesomeDebouncePromise(
+    this.updateGenderApiCall,
+    1000
+  );
+
+  async componentDidMount() {
     //get user by userId that we set in redux on login
     await db
       .collection("users")
@@ -88,40 +115,41 @@ class SettingsScreen extends React.Component {
       });
   }
 
-  updateGenderShownOnServer = () => {
-    db.collection("users")
-      .doc(this.props.userId)
-      .update({
-        "settings.genderShownSelection": this.state.genderShownSelection
-      })
-      .then(function() {
-        console.log("Gender shown successfully updated!");
-      });
-  };
-
   onToggleSwitch = () => {
     this.setState({ profilePublic: !this.state.profilePublic });
-    console.log(this.state.profilePublic);
+    this.updateProfilePublicApiCallDebounced(this.props.userId);
   };
 
-  SliderOneValuesChangeStart() {
+  sliderValuesChangeStart = () => {
     this.setState({
       sliderOneChanging: true
     });
-  }
+  };
 
-  SliderOneValuesChange(values) {
+  sliderValuesChange = sliderValues => {
     this.setState({
-      sliderOneValue: values[0],
-      sliderTwoValue: values[1]
+      sliderOneValue: sliderValues[0],
+      sliderTwoValue: sliderValues[1]
     });
-  }
+    this.updateSliderValuesApiCallDebounced(this.props.userId, sliderValues);
+  };
 
-  SliderOneValuesChangeFinish() {
+  sliderValuesChangeFinish = () => {
     this.setState({
       sliderOneChanging: false
     });
-  }
+  };
+
+  onGenderValueChange = async newValue => {
+    if (newValue == "Men") {
+      await this.setState({ genderShownSelection: "Men" });
+    } else if (newValue == "Women") {
+      await this.setState({ genderShownSelection: "Women" });
+    } else {
+      await this.setState({ genderShownSelection: "Everyone" });
+    }
+    this.updateGenderApiCallDebounced(this.props.userId);
+  };
 
   logOut = () => {
     firebase
@@ -176,9 +204,9 @@ class SettingsScreen extends React.Component {
               <MultiSlider
                 values={[this.state.sliderOneValue, this.state.sliderTwoValue]}
                 sliderLength={280}
-                onValuesChangeStart={this.SliderOneValuesChangeStart}
-                onValuesChange={this.SliderOneValuesChange}
-                onValuesChangeFinish={this.SliderOneValuesChangeFinish}
+                onValuesChangeStart={() => this.sliderValuesChangeStart()}
+                onValuesChange={values => this.sliderValuesChange(values)}
+                onValuesChangeFinish={() => this.sliderValuesChangeFinish()}
                 min={18}
                 max={65}
               />
@@ -199,9 +227,7 @@ class SettingsScreen extends React.Component {
           </View>
           <Container>
             <Content>
-              <ListItem
-                onPress={() => this.setState({ genderShownSelection: "Men" })}
-              >
+              <ListItem onPress={() => this.onGenderValueChange("Men")}>
                 <Left>
                   <Text>Men</Text>
                 </Left>
@@ -213,9 +239,7 @@ class SettingsScreen extends React.Component {
                   </TouchableOpacity>
                 </Right>
               </ListItem>
-              <ListItem
-                onPress={() => this.setState({ genderShownSelection: "Women" })}
-              >
+              <ListItem onPress={() => this.onGenderValueChange("Women")}>
                 <Left>
                   <Text>Women</Text>
                 </Left>
@@ -227,20 +251,13 @@ class SettingsScreen extends React.Component {
                   </TouchableOpacity>
                 </Right>
               </ListItem>
-              <ListItem
-                onPress={() =>
-                  this.setState({ genderShownSelection: "Everyone" })
-                }
-              >
+              <ListItem onPress={() => this.onGenderValueChange("Everyone")}>
                 <Left>
                   <Text>Everyone</Text>
                 </Left>
                 <Right>
                   <TouchableOpacity>
                     <Radio
-                      onPress={() =>
-                        this.setState({ genderShownSelection: "Everyone" })
-                      }
                       selected={this.state.genderShownSelection == "Everyone"}
                     />
                   </TouchableOpacity>
@@ -264,7 +281,7 @@ class SettingsScreen extends React.Component {
 }
 
 // export default withNavigation(SettingsScreen);
-export default connect(mapStateToProps)(SettingsScreen);
+export default connect(mapStateToProps)(EmployeeSettingsScreen);
 
 const styles = StyleSheet.create({
   toggleSwitchSection: {
