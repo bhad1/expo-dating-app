@@ -15,9 +15,9 @@ import {
 } from "native-base";
 import Spinner from "react-native-loading-spinner-overlay";
 import { connect } from "react-redux";
-import { setUserToken } from "../redux/app-redux";
-import { setIsEmployer } from "../redux/app-redux";
-import { setUserId } from "../redux/app-redux";
+import { setUserToken } from "../../redux/app-redux";
+import { setIsEmployer } from "../../redux/app-redux";
+import { setUserId } from "../../redux/app-redux";
 
 import * as firebase from "firebase";
 

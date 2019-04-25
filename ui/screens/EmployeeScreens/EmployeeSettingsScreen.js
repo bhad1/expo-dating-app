@@ -31,11 +31,11 @@ class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      profilePublic: false,
+      profilePublic: true,
       sliderOneChanging: false,
-      sliderOneValue: 13,
-      sliderTwoValue: 26,
-      genderShownSelection: "Men"
+      sliderOneValue: 0,
+      sliderTwoValue: 0,
+      genderShownSelection: "Women"
     };
     this.onToggleSwitch = this.onToggleSwitch.bind(this);
 
@@ -87,6 +87,17 @@ class SettingsScreen extends React.Component {
         console.log("Error getting documents: ", error);
       });
   }
+
+  updateGenderShownOnServer = () => {
+    db.collection("users")
+      .doc(this.props.userId)
+      .update({
+        "settings.genderShownSelection": this.state.genderShownSelection
+      })
+      .then(function() {
+        console.log("Gender shown successfully updated!");
+      });
+  };
 
   onToggleSwitch = () => {
     this.setState({ profilePublic: !this.state.profilePublic });

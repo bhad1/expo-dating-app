@@ -7,7 +7,7 @@ import {
   View
 } from "react-native";
 import { connect } from "react-redux";
-import { setIsEmployer } from "../redux/app-redux";
+import { setIsEmployer } from "../../redux/app-redux";
 
 const mapStateToProps = state => {
   return {

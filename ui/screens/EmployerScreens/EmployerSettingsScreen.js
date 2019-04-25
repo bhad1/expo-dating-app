@@ -31,11 +31,11 @@ class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      profilePublic: false,
+      profilePublic: true,
       sliderOneChanging: false,
-      sliderOneValue: 13,
-      sliderTwoValue: 26,
-      genderShownSelection: "Men"
+      sliderOneValue: 0,
+      sliderTwoValue: 0,
+      genderShownSelection: "Women"
     };
     this.onToggleSwitch = this.onToggleSwitch.bind(this);
 

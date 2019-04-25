@@ -99,9 +99,9 @@ import {
   createAppContainer
 } from "react-navigation";
 import MainTabNavigator from "./MainTabNavigator";
-import LoginScreen from "./../screens/LoginScreen";
-import SignupScreen from "./../screens/SignupScreen";
-import AuthLoadingScreen from "./../screens/AuthLoadingScreen";
+import LoginScreen from "../screens/LoginScreens/LoginScreen";
+import SignupScreen from "../screens/LoginScreens/SignupScreen";
+import AuthLoadingScreen from "../screens/LoginScreens/AuthLoadingScreen";
 import { connect } from "react-redux";
 import { store } from "../redux/app-redux";
 
