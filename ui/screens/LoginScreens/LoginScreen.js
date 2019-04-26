@@ -81,8 +81,8 @@ class LoginScreen extends React.Component {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(user => {
-        user.user.getIdTokenResult().then(async idTokenResult => {
+      .then(async user => {
+        await user.user.getIdTokenResult().then(async idTokenResult => {
           await this.setUserTokenRedux(idTokenResult.token);
           await this.setUserIdRedux(idTokenResult.claims.user_id);
         });
