@@ -12,22 +12,7 @@ import { WebBrowser } from "expo";
 import SwiperComponent from "../../components/SwiperComponent";
 import { MonoText } from "../../components/StyledText";
 
-import * as firebase from "firebase";
-import "firebase/firestore";
-
-if (!firebase.apps.length) {
-  var firebaseConfig = {
-    apiKey: "AIzaSyAdv3aRVKWf36ezvtYGfK1NRbReU3zio2U",
-    authDomain: "expo-dating-app-cd762.firebaseapp.com",
-    databaseURL: "https://expo-dating-app-cd762.firebaseio.com",
-    projectId: "expo-dating-app-cd762",
-    storageBucket: "expo-dating-app-cd762.appspot.com",
-    messagingSenderId: "670282659913"
-  };
-  firebase.initializeApp(firebaseConfig);
-}
-
-const db = firebase.firestore();
+import { firebase, db, geo } from "../../firebase";
 
 console.disableYellowBox = true;
 
@@ -43,73 +28,32 @@ export default class EmployerHomeScreen extends React.Component {
     header: null
   };
 
-  async componentDidMount() {
-    let jobsArray = [];
-    await db.collection("jobs").onSnapshot(querySnapshot => {
-      jobsArray = [];
-      querySnapshot.forEach(
-        function(doc) {
-          jobsArray.push(doc.data());
-        },
-        err => {
-          console.log(err.message);
-        }
-      );
-      this.setState({
-        jobs: jobsArray
-      });
-    });
-  }
+  async componentDidMount() {}
 
   render() {
     return (
-      <View>
-        <SwiperComponent jobs={this.state.jobs} />
+      <View style={styles.jobsContainer}>
+        <ScrollView>
+          <View style={styles.jobDivTitleContainer}>
+            <Text style={styles.JobDivTitle}>Your Job Postings</Text>
+          </View>
+          <View style={styles.jobDiv}>Job1</View>
+          <View style={styles.jobDiv}>Job1</View>
+          <View style={styles.jobDiv}>Job1</View>
+          <View style={styles.jobDiv}>Job1</View>
+          <View style={styles.jobDiv}>Job1</View>
+          <View style={styles.jobDiv}>Job1</View>
+        </ScrollView>
         <Button
-          onPress={() => this.props.navigation.navigate("CreateJobStack")}
-          style={styles.addJobButton}
+          onPress={() => this.props.navigation.push("CreateJobScreen")}
+          style={styles.createJobButton}
         >
           <Icon name="home" />
-          <Text>Add Job</Text>
+          <Text>Create Job</Text>
         </Button>
       </View>
     );
   }
-
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use
-          useful development tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
-  }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync(
-      "https://docs.expo.io/versions/latest/guides/development-mode"
-    );
-  };
-
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      "https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes"
-    );
-  };
 }
 
 const styles = StyleSheet.create({
@@ -117,28 +61,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff"
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: "rgba(0,0,0,0.4)",
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: "center"
+  jobsContainer: {
+    // top: 100
   },
-  helpContainer: {
-    marginTop: 15,
+  jobDivTitleContainer: {
+    height: 130,
+    justifyContent: "flex-end",
     alignItems: "center"
   },
-  helpLink: {
-    paddingVertical: 15
+  JobDivTitle: {
+    fontSize: 25
   },
-  text: {
-    textAlign: "center",
-    fontSize: 50,
-    backgroundColor: "transparent"
+  jobDiv: {
+    height: 140,
+    width: "100%",
+    backgroundColor: "grey",
+    borderBottomColor: "black",
+    borderBottomWidth: 0.5,
+    borderTopColor: "black",
+    borderTopWidth: 0.5
   },
-  addJobButton: {
+  createJobButton: {
     position: "absolute",
-    top: 70,
+    top: 50,
     right: 10
   }
 });

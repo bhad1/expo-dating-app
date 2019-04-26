@@ -37,9 +37,7 @@ class CreateJobsScreen extends React.Component {
   };
 
   convertAddressToCoordinates = async () => {
-    // 1600+Amphitheatre+Parkway,+Mountain+View,+CA
-    // 1984 Hosea L Williams Dr NE, Atlanta, GA
-    // 2210 Westlake Ave, Seattle, WA 98121
+    //Example correctly formatted address - 1600+Amphitheatre+Parkway,+Mountain+View,+CA
     combinedAddress =
       this.state.addressLine1 +
       ", " +
@@ -80,7 +78,7 @@ class CreateJobsScreen extends React.Component {
     });
   };
 
-  addJob = async () => {
+  createJob = async () => {
     await this.convertAddressToCoordinates();
     // const point = geo.point(this.state.lat, this.state.lng);
     // seattle coordinates 47.611118, -122.331409
@@ -181,8 +179,8 @@ class CreateJobsScreen extends React.Component {
             />
           </Item>
         </Form>
-        <View style={styles.AddJobButtonContainer}>
-          <Button onPress={() => this.addJob()}>
+        <View style={styles.CreateJobButtonContainer}>
+          <Button onPress={() => this.createJob()}>
             <Text>Add Job</Text>
           </Button>
         </View>
@@ -194,7 +192,7 @@ class CreateJobsScreen extends React.Component {
 export default connect(mapStateToProps)(CreateJobsScreen);
 
 const styles = StyleSheet.create({
-  AddJobButtonContainer: {
+  CreateJobButtonContainer: {
     width: "100%",
     display: "flex",
     justifyContent: "center",

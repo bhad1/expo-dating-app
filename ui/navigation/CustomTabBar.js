@@ -25,7 +25,6 @@ class CustomTabBar extends React.Component {
       <View style={styles.container}>
         // You map over all existing routes defined in TabNavigator
         {routes.map((route, index) => {
-          // This could be improved, but it's just to show a possible solution
           if (isEmployer) {
             switch (route.routeName) {
               case "EmployerHomeStack":
@@ -35,6 +34,7 @@ class CustomTabBar extends React.Component {
                     style={styles.tabItem}
                     badge
                     vertical
+                    key={index}
                   >
                     <Badge>
                       <Text>2</Text>
@@ -50,6 +50,7 @@ class CustomTabBar extends React.Component {
                     style={styles.tabItem}
                     badge
                     vertical
+                    key={index}
                   >
                     <Badge>
                       <Text>2</Text>
@@ -65,6 +66,7 @@ class CustomTabBar extends React.Component {
                     style={styles.tabItem}
                     badge
                     vertical
+                    key={index}
                   >
                     <Badge>
                       <Text>2</Text>
@@ -83,6 +85,7 @@ class CustomTabBar extends React.Component {
                     style={styles.tabItem}
                     badge
                     vertical
+                    key={index}
                   >
                     <Badge>
                       <Text>2</Text>
@@ -98,6 +101,7 @@ class CustomTabBar extends React.Component {
                     style={styles.tabItem}
                     badge
                     vertical
+                    key={index}
                   >
                     <Badge>
                       <Text>2</Text>
@@ -113,6 +117,7 @@ class CustomTabBar extends React.Component {
                     style={styles.tabItem}
                     badge
                     vertical
+                    key={index}
                   >
                     <Badge>
                       <Text>2</Text>
@@ -124,7 +129,7 @@ class CustomTabBar extends React.Component {
             }
           }
 
-          return <View />;
+          return <View key={index} />;
         })}
       </View>
     );

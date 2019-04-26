@@ -15,25 +15,6 @@ import { MonoText } from "../../components/StyledText";
 import { connect } from "react-redux";
 import { get } from "geofirex";
 
-// import * as firebase from "firebase";
-// import * as geofirex from "geofirex";
-// import "firebase/firestore";
-
-// if (!firebase.apps.length) {
-//   var firebaseConfig = {
-//     apiKey: "AIzaSyAdv3aRVKWf36ezvtYGfK1NRbReU3zio2U",
-//     authDomain: "expo-dating-app-cd762.firebaseapp.com",
-//     databaseURL: "https://expo-dating-app-cd762.firebaseio.com",
-//     projectId: "expo-dating-app-cd762",
-//     storageBucket: "expo-dating-app-cd762.appspot.com",
-//     messagingSenderId: "670282659913"
-//   };
-//   firebase.initializeApp(firebaseConfig);
-//   const geo = geofirex.init(firebase);
-// }
-
-// const db = firebase.firestore();
-
 import { firebase, db, geo } from "../../firebase";
 
 console.disableYellowBox = true;
@@ -106,41 +87,6 @@ class EmployeeHomeScreen extends React.Component {
     const query = jobs.within(center, radius, field);
     const jobsNearMe = await get(query);
     this.setState({ jobs: jobsNearMe });
-  };
-
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use
-          useful development tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
-  }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync(
-      "https://docs.expo.io/versions/latest/guides/development-mode"
-    );
-  };
-
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      "https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes"
-    );
   };
 }
 
