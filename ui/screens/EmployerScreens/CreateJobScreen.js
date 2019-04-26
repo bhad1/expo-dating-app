@@ -5,10 +5,9 @@ import { Content, Text, Button, Form, Item, Input, Toast } from "native-base";
 import { withNavigation } from "react-navigation";
 import { ScrollView } from "react-native-gesture-handler";
 import { connect } from "react-redux";
+import LoadingScreen from "../LoadingScreen";
 
 import { firebase, db, geo } from "../../firebase";
-
-// const db = firebase.firestore();
 
 const mapStateToProps = state => {
   return {
@@ -29,7 +28,8 @@ class CreateJobsScreen extends React.Component {
       state: "",
       zipCode: "",
       lat: 0,
-      lng: 0
+      lng: 0,
+      spinner: false
     };
   }
   static navigationOptions = {
@@ -59,7 +59,9 @@ class CreateJobsScreen extends React.Component {
           })
       )
       .catch(error => {
-        console.log(error);
+        Toast.show({
+          text: error
+        });
       });
   };
 
@@ -79,15 +81,11 @@ class CreateJobsScreen extends React.Component {
   };
 
   createJob = async () => {
+    this.setState({ spinner: true });
     await this.convertAddressToCoordinates();
-    // const point = geo.point(this.state.lat, this.state.lng);
-    // seattle coordinates 47.611118, -122.331409
-    // portland coordinates 45.515264, -122.676383
-    // home coordinates 33.753921, -85.311777
-    // greater good bbq coordinates 33.751467, -84.310024
-    // poor hendrix coordinates 33.751037, -84.308759
     const point = geo.point(this.state.lat, this.state.lng);
-    geo
+    let newJobId;
+    await geo
       .collection("jobs")
       .add({
         userId: this.props.userId,
@@ -103,11 +101,11 @@ class CreateJobsScreen extends React.Component {
       })
       .then(async docRef => {
         console.log("Document written with ID: ", docRef.id);
+        newJobId = docRef.id;
         Toast.show({
           text: "Job created"
         });
         await this.resetState();
-        this.props.navigation.navigate("EmployerHomeStack");
       })
       .catch(error => {
         console.error("Error adding document: ", error);
@@ -115,11 +113,28 @@ class CreateJobsScreen extends React.Component {
           text: error
         });
       });
+    await this.saveJobToUser(this.props.userId, newJobId);
+    this.setState({ spinner: false }, () => {
+      this.props.navigation.goBack();
+    });
+  };
+
+  saveJobToUser = async (userId, newJobId) => {
+    await db
+      .collection("users")
+      .doc(userId)
+      .update({
+        jobsCreated: firebase.firestore.FieldValue.arrayUnion(newJobId)
+      })
+      .then(function() {
+        console.log("Job successfully added to user!");
+      });
   };
 
   render() {
     return (
       <Content>
+        {this.state.spinner && <LoadingScreen textContent={"Loading..."} />}
         <Form>
           <Item>
             <Input

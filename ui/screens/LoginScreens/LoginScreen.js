@@ -13,11 +13,11 @@ import {
   Input,
   Toast
 } from "native-base";
-import Spinner from "react-native-loading-spinner-overlay";
 import { connect } from "react-redux";
 import { setUserToken } from "../../redux/app-redux";
 import { setIsEmployer } from "../../redux/app-redux";
 import { setUserId } from "../../redux/app-redux";
+import LoadingScreen from "../LoadingScreen";
 
 import * as firebase from "firebase";
 
@@ -88,19 +88,15 @@ class LoginScreen extends React.Component {
         });
 
         this.setState({ spinner: false }, () => {
-          setTimeout(() => {
-            this.props.navigation.navigate("Main");
-          }, 100);
+          this.props.navigation.navigate("Main");
         });
       })
       .catch(error => {
         this.setState({ spinner: false }, () => {
-          setTimeout(() => {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            alert(errorCode + errorMessage);
-          }, 100);
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          alert(errorCode + errorMessage);
         });
       });
   };
@@ -127,6 +123,7 @@ class LoginScreen extends React.Component {
           textContent={"Loading..."}
           textStyle={styles.spinnerTextStyle}
         /> */}
+        {this.state.spinner && <LoadingScreen textContent={"Loading..."} />}
         <Form>
           <Item floatingLabel>
             <Label>Email </Label>

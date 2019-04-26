@@ -16,12 +16,12 @@ import {
   CheckBox,
   Body
 } from "native-base";
-import Spinner from "react-native-loading-spinner-overlay";
 
 import firebase from "firebase";
-// import functions from "firebase-functions";
 import "firebase/functions";
 import "firebase/firestore";
+
+import LoadingScreen from "../LoadingScreen";
 
 const db = firebase.firestore();
 const firebaseFunctions = firebase.functions();
@@ -73,24 +73,20 @@ export default class SignupScreen extends React.Component {
       .then(() => {
         // have to do setState as a hack to get around a bug
         this.setState({ spinner: false }, () => {
-          setTimeout(() => {
-            Toast.show({
-              text: "You've successfully created an account!",
-              buttonText: "Okay"
-            });
-            this.backToLogin();
-          }, 100);
+          Toast.show({
+            text: "You've successfully created an account!",
+            buttonText: "Okay"
+          });
+          this.backToLogin();
         });
         this.addEmployerRoleToAuth(email);
       })
       .catch(error => {
         this.setState({ spinner: false }, () => {
-          setTimeout(() => {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            alert(errorMessage);
-          }, 100);
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          alert(errorMessage);
         });
       });
   };
@@ -101,11 +97,7 @@ export default class SignupScreen extends React.Component {
   render() {
     return (
       <Container style={styles.container}>
-        {/* <Spinner
-          visible={this.state.spinner}
-          textContent={"Loading..."}
-          textStyle={styles.spinnerTextStyle}
-        /> */}
+        {this.state.spinner && <LoadingScreen textContent={"Loading..."} />}
         <Form>
           <Item floatingLabel>
             <Label>Email </Label>
