@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { Button, Icon, Text } from "native-base";
+import { Button, Icon, Text, Spinner } from "native-base";
 import { WebBrowser } from "expo";
 import SwiperComponent from "../../components/SwiperComponent";
 import { MonoText } from "../../components/StyledText";
@@ -27,7 +27,8 @@ class EmployerHomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      employersJobPostings: []
+      employersJobPostings: [],
+      spinner: false
     };
   }
 
@@ -37,6 +38,7 @@ class EmployerHomeScreen extends React.Component {
 
   async componentDidMount() {
     let employersJobPostings = [];
+    this.setState({ spinner: true });
     //get user by userId that we set in redux on login
     await db
       .collection("jobs")
@@ -52,27 +54,33 @@ class EmployerHomeScreen extends React.Component {
       .catch(function(error) {
         console.log("Error getting employers job postings: ", error);
       });
+    this.setState({ spinner: false });
   }
   render() {
     return (
       <View style={styles.jobsContainer}>
-        <ScrollView>
-          <View style={styles.jobDivTitleContainer}>
-            <Text style={styles.JobDivTitle}>Your Job Postings</Text>
-          </View>
-          {this.state.employersJobPostings.map((job, i) => {
-            return (
-              <View style={styles.jobDiv} key={i}>
-                <Text>Company: {job.company}</Text>
-                <Text>Street Address: {job.addressLine1}</Text>
-                <Text>City: {job.city}</Text>
-                <Text>State: {job.state}</Text>
-                <Text>Weekly Hours: {job.weeklyHours}</Text>
-                <Text>Job Description: {job.jobDescription}</Text>
-              </View>
-            );
-          })}
-        </ScrollView>
+        <View style={styles.jobDivTitleContainer}>
+          <Text style={styles.JobDivTitle}>Your Job Postings</Text>
+        </View>
+        {this.state.spinner ? (
+          <Spinner color="grey" style={styles.jobPostingsSpinner} />
+        ) : (
+          <ScrollView>
+            {this.state.employersJobPostings.map((job, i) => {
+              return (
+                <View style={styles.jobDiv} key={i}>
+                  <Text>Company: {job.company}</Text>
+                  <Text>Street Address: {job.addressLine1}</Text>
+                  <Text>City: {job.city}</Text>
+                  <Text>State: {job.state}</Text>
+                  <Text>Weekly Hours: {job.weeklyHours}</Text>
+                  <Text>Job Description: {job.jobDescription}</Text>
+                </View>
+              );
+            })}
+          </ScrollView>
+        )}
+
         <Button
           onPress={() => this.props.navigation.push("CreateJobScreen")}
           style={styles.createJobButton}
@@ -94,6 +102,9 @@ const styles = StyleSheet.create({
   },
   jobsContainer: {
     // top: 100
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
   },
   jobDivTitleContainer: {
     height: 130,
@@ -106,7 +117,6 @@ const styles = StyleSheet.create({
   jobDiv: {
     height: 138,
     width: "100%",
-    // backgroundColor: "grey",
     borderBottomColor: "black",
     borderBottomWidth: 0.5,
     borderTopColor: "black",
@@ -116,5 +126,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 50,
     right: 10
+  },
+  jobPostingsSpinner: {
+    top: 20
   }
 });
