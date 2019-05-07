@@ -13,6 +13,7 @@ import EmployerHomeScreen from "../screens/EmployerScreens/EmployerHomeScreen";
 import EmployerMatchesScreen from "../screens/EmployerScreens/EmployerMatchesScreen";
 import EmployerSettingsScreen from "../screens/EmployerScreens/EmployerSettingsScreen";
 import CreateJobScreen from "../screens/EmployerScreens/CreateJobScreen";
+import JobPostingDetailsScreen from "../screens/EmployerScreens/JobPostingDetailsScreen";
 import CustomTabBar from "./CustomTabBar";
 
 //employee screens
@@ -75,7 +76,8 @@ EmployeeSettingsStack.navigationOptions = {
 
 const EmployerHomeStack = createStackNavigator({
   Home: EmployerHomeScreen,
-  CreateJobScreen: CreateJobScreen
+  CreateJobScreen: CreateJobScreen,
+  JobPostingDetailsScreen: JobPostingDetailsScreen
 });
 
 EmployerHomeStack.navigationOptions = {

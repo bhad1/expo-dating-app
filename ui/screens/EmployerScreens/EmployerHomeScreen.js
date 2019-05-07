@@ -47,7 +47,9 @@ class EmployerHomeScreen extends React.Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(async doc => {
-          employersJobPostings.push(doc.data());
+          employersJobPostings.push(
+            Object.assign({ docId: doc.id }, doc.data())
+          );
         });
         this.setState({ employersJobPostings: employersJobPostings });
       })
@@ -69,12 +71,20 @@ class EmployerHomeScreen extends React.Component {
             {this.state.employersJobPostings.map((job, i) => {
               return (
                 <View style={styles.jobDiv} key={i}>
-                  <Text>Company: {job.company}</Text>
-                  <Text>Street Address: {job.addressLine1}</Text>
-                  <Text>City: {job.city}</Text>
-                  <Text>State: {job.state}</Text>
-                  <Text>Weekly Hours: {job.weeklyHours}</Text>
-                  <Text>Job Description: {job.jobDescription}</Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.props.navigation.push("JobPostingDetailsScreen", {
+                        jobId: job.docId
+                      })
+                    }
+                  >
+                    <Text>Company: {job.company}</Text>
+                    <Text>Street Address: {job.addressLine1}</Text>
+                    <Text>City: {job.city}</Text>
+                    <Text>State: {job.state}</Text>
+                    <Text>Weekly Hours: {job.weeklyHours}</Text>
+                    <Text>Job Description: {job.jobDescription}</Text>
+                  </TouchableOpacity>
                 </View>
               );
             })}
