@@ -22,7 +22,8 @@ console.disableYellowBox = true;
 const mapStateToProps = state => {
   return {
     isEmployer: state.isEmployer,
-    userLocation: state.userLocation
+    userLocation: state.userLocation,
+    userId: state.userId
   };
 };
 
@@ -30,7 +31,8 @@ class EmployeeHomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      jobs: []
+      jobs: [],
+      jobsAlreadySwipedOn: []
     };
 
     // there is no way to make it go straight to employer homepage on login
@@ -47,22 +49,9 @@ class EmployeeHomeScreen extends React.Component {
 
   async componentDidMount() {
     if (!this.props.isEmployer) {
+      this.getUser(this.props.userId);
       this.getJobsNearUser();
     }
-    // query.subscribe(console.log);
-    // await db.collection("jobs").onSnapshot(querySnapshot => {
-    //   querySnapshot.forEach(
-    //     function(doc) {
-    //       jobsArray.push(doc.data());
-    //     },
-    //     err => {
-    //       console.log(err.message);
-    //     }
-    //   );
-    //   this.setState({
-    //     jobs: jobsArray
-    //   });
-    // });
   }
 
   render() {
@@ -76,6 +65,28 @@ class EmployeeHomeScreen extends React.Component {
     );
   }
 
+  getUser = async userId => {
+    let jobsAlreadySwipedOn = [];
+    await db
+      .collection("users")
+      .doc(userId)
+      .get()
+      .then(doc => {
+        if (doc.data().jobsThatUserSwipedLeftOn) {
+          jobsAlreadySwipedOn.push(...doc.data().jobsThatUserSwipedLeftOn);
+        }
+        if (doc.data().jobsThatUserSwipedRightOn) {
+          jobsAlreadySwipedOn.push(...doc.data().jobsThatUserSwipedRightOn);
+        }
+        this.setState({ jobsAlreadySwipedOn: jobsAlreadySwipedOn });
+
+        console.log(this.state.jobsAlreadySwipedOn);
+      })
+      .catch(function(error) {
+        console.log("Error getting documents: ", error);
+      });
+  };
+
   getJobsNearUser = async () => {
     let userLatitude = this.props.userLocation.coords.latitude;
     let userLongitude = this.props.userLocation.coords.longitude;
@@ -85,8 +96,16 @@ class EmployeeHomeScreen extends React.Component {
     const field = "position";
 
     const query = jobs.within(center, radius, field);
-    const jobsNearMe = await get(query);
+    let jobsNearMe = await get(query);
+    jobsNearMe = this.filterOutJobsAlreadySwipedOn(
+      jobsNearMe,
+      this.state.jobsAlreadySwipedOn
+    );
     this.setState({ jobs: jobsNearMe });
+  };
+
+  filterOutJobsAlreadySwipedOn = (jobs, jobsAlreadySwipedOn) => {
+    return jobs.filter(val => !jobsAlreadySwipedOn.includes(val.id));
   };
 }
 

@@ -30,7 +30,8 @@ const mapStateToProps = state => {
     userId: state.userId
   };
 };
-let jobsThatUserSwipedRightOn = [];
+let jobsThatUserSwipedRightOn = ["default"];
+let jobsThatUserSwipedLeftOn = ["default"];
 class SwiperComponent extends React.Component {
   constructor(props) {
     super(props);
@@ -44,43 +45,39 @@ class SwiperComponent extends React.Component {
 
   onRightSwipe = async cardIndex => {
     jobsThatUserSwipedRightOn.push(this.props.jobs[cardIndex].id);
-    await this.setState({
-      jobsThatUserSwipedRightOn: jobsThatUserSwipedRightOn
-    });
-    this.addPotentialEmployeeToJobApiCallDebounced(
+    this.recordSwipingInDBApiCallDebounced(
       this.props.jobs[cardIndex].id,
       this.props.userId
     );
   };
 
-  addPotentialEmployeeToJobApiCall = (jobId, userId) => {
+  onLeftSwipe = async cardIndex => {
+    jobsThatUserSwipedLeftOn.push(this.props.jobs[cardIndex].id);
+    this.recordSwipingInDBApiCallDebounced(
+      this.props.jobs[cardIndex].id,
+      this.props.userId
+    );
+  };
+
+  recordSwipingInDBApiCall = (jobId, userId) => {
     db.collection("users")
       .doc(userId)
       .update({
         jobsThatUserSwipedRightOn: firebase.firestore.FieldValue.arrayUnion(
-          ...this.state.jobsThatUserSwipedRightOn
+          ...jobsThatUserSwipedRightOn
+        ),
+        jobsThatUserSwipedLeftOn: firebase.firestore.FieldValue.arrayUnion(
+          ...jobsThatUserSwipedLeftOn
         )
       })
       .then(function() {
-        console.log(
-          "Job was added to jobsThatUserSwipedRightOn array in users collection"
-        );
+        console.log("Swipe was recorded in users collection");
       });
-    // db.collection("jobs")
-    //   .doc(jobId)
-    //   .update({
-    //     usersThatSwipedRight: firebase.firestore.FieldValue.arrayUnion(
-    //       ...this.state.jobsThatUserSwipedRightOn
-    //     )
-    //   })
-    //   .then(function() {
-    //     console.log("User was added on swipe right to job");
-    //   });
   };
 
-  addPotentialEmployeeToJobApiCallDebounced = AwesomeDebouncePromise(
-    this.addPotentialEmployeeToJobApiCall,
-    5000
+  recordSwipingInDBApiCallDebounced = AwesomeDebouncePromise(
+    this.recordSwipingInDBApiCall,
+    2000
   );
 
   render() {
@@ -109,17 +106,13 @@ class SwiperComponent extends React.Component {
               </View>
             );
           }}
-          onSwiped={cardIndex => {
-            // console.log(cardIndex);
-          }}
-          onSwipedAll={() => {
-            console.log("onSwipedAll");
-          }}
+          onSwiped={cardIndex => {}}
+          onSwipedAll={() => {}}
           onSwipedRight={cardIndex => {
             this.onRightSwipe(cardIndex);
           }}
           onSwipedLeft={cardIndex => {
-            console.log(cardIndex);
+            this.onLeftSwipe(cardIndex);
           }}
           cardIndex={0}
           backgroundColor={"#4FD0E9"}
