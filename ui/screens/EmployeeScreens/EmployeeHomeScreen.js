@@ -4,16 +4,17 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
-  View,
-  Button
+  View
 } from "react-native";
+import { Content, Text, Button, Form, Item, Input, Toast } from "native-base";
+
 import { WebBrowser } from "expo";
 import SwiperComponent from "../../components/SwiperComponent";
 import { MonoText } from "../../components/StyledText";
 import { connect } from "react-redux";
 import { get } from "geofirex";
+import Modal from "react-native-modal";
 
 import { firebase, db, geo } from "../../firebase";
 
@@ -32,7 +33,13 @@ class EmployeeHomeScreen extends React.Component {
     super(props);
     this.state = {
       jobs: [],
-      jobsAlreadySwipedOn: []
+      jobsAlreadySwipedOn: [],
+      userProfile: [],
+      showCreateProfileModal: false,
+      firstName: "",
+      lastName: "",
+      userBio: "",
+      pastExperience: ""
     };
 
     // there is no way to make it go straight to employer homepage on login
@@ -47,12 +54,86 @@ class EmployeeHomeScreen extends React.Component {
     header: null
   };
 
+  async componentWillMount() {
+    await this.getUser(this.props.userId);
+    // if userProfile is empty that means they've never logged in before,
+    // so show them the create profile modal
+    if (!this.state.userProfile) {
+      this.setState({ showCreateProfileModal: true });
+    }
+  }
+
   async componentDidMount() {
     if (!this.props.isEmployer) {
-      this.getUser(this.props.userId);
       this.getJobsNearUser();
     }
   }
+
+  createProfile = async userId => {
+    this.setState({ spinner: true });
+    await db
+      .collection("users")
+      .doc(userId)
+      .update({
+        "userProfile.firstName": this.state.firstName,
+        "userProfile.lastName": this.state.lastName,
+        "userProfile.userBio": this.state.userBio,
+        "userProfile.pastExperience": this.state.pastExperience
+      })
+      .then(async docRef => {
+        Toast.show({
+          text: "Profile Created"
+        });
+      })
+      .catch(error => {
+        console.error("Error adding document: ", error);
+        Toast.show({
+          text: error
+        });
+      });
+    this.setState({ spinner: false, showCreateProfileModal: false }, () => {});
+  };
+
+  renderModalContent = () => (
+    <View style={styles.modalContent}>
+      <Text>Create Profile</Text>
+      <Form>
+        <Item>
+          <Input
+            placeholder="First Name"
+            value={this.state.firstName}
+            onChangeText={firstName => this.setState({ firstName })}
+          />
+        </Item>
+        <Item>
+          <Input
+            placeholder="Last Name"
+            value={this.state.lastName}
+            onChangeText={lastName => this.setState({ lastName })}
+          />
+        </Item>
+        <Item>
+          <Input
+            placeholder="Short Bio About Yourself"
+            value={this.state.userBio}
+            onChangeText={userBio => this.setState({ userBio })}
+          />
+        </Item>
+        <Item last>
+          <Input
+            placeholder="Past Experience"
+            value={this.state.pastExperience}
+            onChangeText={pastExperience => this.setState({ pastExperience })}
+          />
+        </Item>
+      </Form>
+      <View style={styles.CreateJobButtonContainer}>
+        <Button onPress={() => this.createProfile(this.props.userId)}>
+          <Text>Create Profile</Text>
+        </Button>
+      </View>
+    </View>
+  );
 
   render() {
     if (this.props.isEmployer) {
@@ -60,6 +141,21 @@ class EmployeeHomeScreen extends React.Component {
     }
     return (
       <View>
+        <View style={styles.employeeHomeScreenContainer}>
+          <Modal
+            isVisible={this.state.showCreateProfileModal}
+            backdropOpacity={0.8}
+            animationIn="zoomInDown"
+            animationOut="zoomOutUp"
+            animationInTiming={600}
+            animationOutTiming={600}
+            backdropTransitionInTiming={600}
+            backdropTransitionOutTiming={600}
+          >
+            {this.renderModalContent()}
+          </Modal>
+        </View>
+
         <SwiperComponent jobs={this.state.jobs} />
       </View>
     );
@@ -77,6 +173,9 @@ class EmployeeHomeScreen extends React.Component {
         }
         if (doc.data().jobsThatUserSwipedRightOn) {
           jobsAlreadySwipedOn.push(...doc.data().jobsThatUserSwipedRightOn);
+        }
+        if (doc.data().userProfile) {
+          this.setState({ userProfile: doc.data().userProfile });
         }
         this.setState({ jobsAlreadySwipedOn: jobsAlreadySwipedOn });
 
@@ -112,9 +211,10 @@ class EmployeeHomeScreen extends React.Component {
 export default connect(mapStateToProps)(EmployeeHomeScreen);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
+  employeeHomeScreenContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
   },
   developmentModeText: {
     marginBottom: 20,
@@ -202,5 +302,19 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 50,
     backgroundColor: "transparent"
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    height: "90%",
+    width: "100%"
+    // display: "flex",
+    // justifyContent: "center",
+    // alignItems: "center"
+  },
+  modalContentTitle: {
+    // textAlign: "center",
+    // fontSize: 50,
+    // backgroundColor: "transparent"
   }
 });

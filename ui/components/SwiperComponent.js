@@ -59,6 +59,9 @@ class SwiperComponent extends React.Component {
     );
   };
 
+  // We do one api call for both jobsThatUserSwipedRightOn and jobsThatUserSwipedLeftOn, even if one
+  // array is empty because we want to debounce one api call vs two and have less writes.
+  // We have the 'default' value in the array because it will throw an error if its empty
   recordSwipingInDBApiCall = (jobId, userId) => {
     db.collection("users")
       .doc(userId)
