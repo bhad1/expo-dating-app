@@ -84,9 +84,11 @@ export default class SignupScreen extends React.Component {
       .catch(error => {
         this.setState({ spinner: false }, () => {
           // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          alert(errorMessage);
+          setTimeout(() => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            alert(errorMessage);
+          }, 1000);
         });
       });
   };

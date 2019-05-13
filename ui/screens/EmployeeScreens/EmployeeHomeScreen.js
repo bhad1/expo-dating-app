@@ -7,7 +7,16 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { Content, Text, Button, Form, Item, Input, Toast } from "native-base";
+import {
+  Content,
+  Text,
+  Button,
+  Form,
+  Item,
+  Input,
+  Toast,
+  Spinner
+} from "native-base";
 
 import { WebBrowser } from "expo";
 import SwiperComponent from "../../components/SwiperComponent";
@@ -39,7 +48,9 @@ class EmployeeHomeScreen extends React.Component {
       firstName: "",
       lastName: "",
       userBio: "",
-      pastExperience: ""
+      pastExperience: "",
+      spinner: false,
+      showNoMoreJobsText: false
     };
 
     // there is no way to make it go straight to employer homepage on login
@@ -135,32 +146,6 @@ class EmployeeHomeScreen extends React.Component {
     </View>
   );
 
-  render() {
-    if (this.props.isEmployer) {
-      return <View />;
-    }
-    return (
-      <View>
-        <View style={styles.employeeHomeScreenContainer}>
-          <Modal
-            isVisible={this.state.showCreateProfileModal}
-            backdropOpacity={0.8}
-            animationIn="zoomInDown"
-            animationOut="zoomOutUp"
-            animationInTiming={600}
-            animationOutTiming={600}
-            backdropTransitionInTiming={600}
-            backdropTransitionOutTiming={600}
-          >
-            {this.renderModalContent()}
-          </Modal>
-        </View>
-
-        <SwiperComponent jobs={this.state.jobs} />
-      </View>
-    );
-  }
-
   getUser = async userId => {
     let jobsAlreadySwipedOn = [];
     await db
@@ -187,11 +172,12 @@ class EmployeeHomeScreen extends React.Component {
   };
 
   getJobsNearUser = async () => {
+    this.setState({ spinner: true });
     let userLatitude = this.props.userLocation.coords.latitude;
     let userLongitude = this.props.userLocation.coords.longitude;
     const jobs = geo.collection("jobs");
     const center = geo.point(userLatitude, userLongitude);
-    const radius = 100;
+    const radius = 10;
     const field = "position";
 
     const query = jobs.within(center, radius, field);
@@ -201,20 +187,73 @@ class EmployeeHomeScreen extends React.Component {
       this.state.jobsAlreadySwipedOn
     );
     this.setState({ jobs: jobsNearMe });
+    this.setState({ spinner: false });
   };
 
   filterOutJobsAlreadySwipedOn = (jobs, jobsAlreadySwipedOn) => {
     return jobs.filter(val => !jobsAlreadySwipedOn.includes(val.id));
   };
+
+  onFinishedSwiping = () => {
+    this.setState({ showNoMoreJobsText: true });
+  };
+
+  displayLocalJobPostings = () => {
+    if (!this.state.jobs.length || this.state.showNoMoreJobsText) {
+      return (
+        <View>
+          <Text style={styles.noMoreJobsText}>
+            There are no more jobs in your area!
+          </Text>
+        </View>
+      );
+    } else {
+      return (
+        <SwiperComponent
+          jobs={this.state.jobs}
+          onFinishedSwiping={this.onFinishedSwiping}
+        />
+      );
+    }
+  };
+
+  render() {
+    if (this.props.isEmployer) {
+      return <View />;
+    }
+    return (
+      <View>
+        <View style={styles.employeeHomeScreenContainer}>
+          <Modal
+            isVisible={this.state.showCreateProfileModal}
+            backdropOpacity={0.8}
+            animationIn="zoomInDown"
+            animationOut="zoomOutUp"
+            animationInTiming={600}
+            animationOutTiming={600}
+            backdropTransitionInTiming={600}
+            backdropTransitionOutTiming={600}
+          >
+            {this.renderModalContent()}
+          </Modal>
+          {this.state.spinner ? (
+            <Spinner color="grey" style={styles.spinner} />
+          ) : (
+            <View>{this.displayLocalJobPostings()}</View>
+          )}
+        </View>
+      </View>
+    );
+  }
 }
 
 export default connect(mapStateToProps)(EmployeeHomeScreen);
 
 const styles = StyleSheet.create({
   employeeHomeScreenContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    // display: "flex",
+    // justifyContent: "center",
+    // alignItems: "center"
   },
   developmentModeText: {
     marginBottom: 20,
@@ -316,5 +355,11 @@ const styles = StyleSheet.create({
     // textAlign: "center",
     // fontSize: 50,
     // backgroundColor: "transparent"
+  },
+  spinner: {
+    top: 20
+  },
+  noMoreJobsText: {
+    top: 50
   }
 });

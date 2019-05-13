@@ -44,20 +44,45 @@ class EmployerHomeScreen extends React.Component {
       .collection("jobs")
       // firebase.firestore.Fieldpath.documentID() is how you search by the ID itself
       .where("userId", "==", this.props.userId)
-      .get()
-      .then(querySnapshot => {
+      .onSnapshot(querySnapshot => {
         querySnapshot.forEach(async doc => {
           employersJobPostings.push(
             Object.assign({ docId: doc.id }, doc.data())
           );
         });
         this.setState({ employersJobPostings: employersJobPostings });
-      })
-      .catch(function(error) {
-        console.log("Error getting employers job postings: ", error);
+        employersJobPostings = [];
       });
     this.setState({ spinner: false });
   }
+
+  displayEmployersJobPostings = () => {
+    if (this.state.employersJobPostings.length) {
+      return this.state.employersJobPostings.map((job, i) => {
+        return (
+          <View style={styles.jobDiv} key={i}>
+            <TouchableOpacity
+              onPress={() =>
+                this.props.navigation.push("JobPostingDetailsScreen", {
+                  jobId: job.docId
+                })
+              }
+            >
+              <Text>Company: {job.company}</Text>
+              <Text>Street Address: {job.addressLine1}</Text>
+              <Text>City: {job.city}</Text>
+              <Text>State: {job.state}</Text>
+              <Text>Weekly Hours: {job.weeklyHours}</Text>
+              <Text>Job Description: {job.jobDescription}</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      });
+    } else {
+      return <Text>You have not created a job yet</Text>;
+    }
+  };
+
   render() {
     return (
       <View style={styles.jobsContainer}>
@@ -67,28 +92,7 @@ class EmployerHomeScreen extends React.Component {
         {this.state.spinner ? (
           <Spinner color="grey" style={styles.jobPostingsSpinner} />
         ) : (
-          <ScrollView>
-            {this.state.employersJobPostings.map((job, i) => {
-              return (
-                <View style={styles.jobDiv} key={i}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.push("JobPostingDetailsScreen", {
-                        jobId: job.docId
-                      })
-                    }
-                  >
-                    <Text>Company: {job.company}</Text>
-                    <Text>Street Address: {job.addressLine1}</Text>
-                    <Text>City: {job.city}</Text>
-                    <Text>State: {job.state}</Text>
-                    <Text>Weekly Hours: {job.weeklyHours}</Text>
-                    <Text>Job Description: {job.jobDescription}</Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
-          </ScrollView>
+          <ScrollView>{this.displayEmployersJobPostings()}</ScrollView>
         )}
 
         <Button

@@ -11,7 +11,8 @@ import {
   Right,
   Thumbnail,
   Text,
-  Button
+  Button,
+  Spinner
 } from "native-base";
 import { withNavigation } from "react-navigation";
 
@@ -69,6 +70,31 @@ export default class JobPostingDetailsScreen extends React.Component {
     this.setState({ spinner: false });
   }
 
+  displayUsersThatSwipedOnPosting = () => {
+    if (this.state.usersThatSwipedOnPosting.length) {
+      return this.state.usersThatSwipedOnPosting.map((user, index) => {
+        return (
+          <ListItem key={index} avatar>
+            <Left>
+              <Thumbnail source={profileImage4} />
+            </Left>
+            <Body>
+              <Text>
+                {user.userProfile.firstName} {user.userProfile.lastName}
+              </Text>
+              <Text note>{user.userProfile.userBio}</Text>
+            </Body>
+            <Right>
+              <Text note>3:43 pm</Text>
+            </Right>
+          </ListItem>
+        );
+      });
+    } else {
+      return <Text>No users have liked this post yet!</Text>;
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -76,24 +102,11 @@ export default class JobPostingDetailsScreen extends React.Component {
           <ScrollView>
             <Container>
               <Content>
-                <List>
-                  {this.state.usersThatSwipedOnPosting.map((user, index) => {
-                    return (
-                      <ListItem key={index} avatar>
-                        <Left>
-                          <Thumbnail source={profileImage4} />
-                        </Left>
-                        <Body>
-                          <Text>{user.firstName}</Text>
-                          <Text note>{user.userBio}</Text>
-                        </Body>
-                        <Right>
-                          <Text note>3:43 pm</Text>
-                        </Right>
-                      </ListItem>
-                    );
-                  })}
-                </List>
+                {this.state.spinner ? (
+                  <Spinner color="grey" style={styles.jobPostingsSpinner} />
+                ) : (
+                  <List>{this.displayUsersThatSwipedOnPosting()}</List>
+                )}
               </Content>
             </Container>
           </ScrollView>
@@ -133,5 +146,8 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     marginRight: 15
+  },
+  jobPostingsSpinner: {
+    top: 20
   }
 });

@@ -110,7 +110,9 @@ class SwiperComponent extends React.Component {
             );
           }}
           onSwiped={cardIndex => {}}
-          onSwipedAll={() => {}}
+          onSwipedAll={() => {
+            this.props.onFinishedSwiping();
+          }}
           onSwipedRight={cardIndex => {
             this.onRightSwipe(cardIndex);
           }}
