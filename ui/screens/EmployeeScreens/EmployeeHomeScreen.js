@@ -43,7 +43,7 @@ class EmployeeHomeScreen extends React.Component {
     this.state = {
       jobs: [],
       jobsAlreadySwipedOn: [],
-      userProfile: [],
+      userProfile: {},
       showCreateProfileModal: false,
       firstName: "",
       lastName: "",
@@ -69,7 +69,10 @@ class EmployeeHomeScreen extends React.Component {
     await this.getUser(this.props.userId);
     // if userProfile is empty that means they've never logged in before,
     // so show them the create profile modal
-    if (!this.state.userProfile) {
+    if (
+      Object.keys(this.state.userProfile).length === 0 &&
+      this.state.userProfile.constructor === Object
+    ) {
       this.setState({ showCreateProfileModal: true });
     }
   }
@@ -163,8 +166,6 @@ class EmployeeHomeScreen extends React.Component {
           this.setState({ userProfile: doc.data().userProfile });
         }
         this.setState({ jobsAlreadySwipedOn: jobsAlreadySwipedOn });
-
-        console.log(this.state.jobsAlreadySwipedOn);
       })
       .catch(function(error) {
         console.log("Error getting documents: ", error);

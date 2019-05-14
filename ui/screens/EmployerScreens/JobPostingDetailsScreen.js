@@ -52,37 +52,25 @@ export default class JobPostingDetailsScreen extends React.Component {
       .catch(function(error) {
         console.log("Error getting employers job postings: ", error);
       });
-    //get user by userId that we set in redux on login
-    // await db
-    //   .collection("jobs")
-    //   // firebase.firestore.Fieldpath.documentID() is how you search by the ID itself
-    //   .where("userId", "==", this.props.userId)
-    //   .get()
-    //   .then(querySnapshot => {
-    //     querySnapshot.forEach(async doc => {
-    //       employersJobPostings.push(doc.data());
-    //     });
-    //     this.setState({ employersJobPostings: employersJobPostings });
-    //   })
-    //   .catch(function(error) {
-    //     console.log("Error getting employers job postings: ", error);
-    //   });
     this.setState({ spinner: false });
   }
 
   displayUsersThatSwipedOnPosting = () => {
     if (this.state.usersThatSwipedOnPosting.length) {
       return this.state.usersThatSwipedOnPosting.map((user, index) => {
+        console.log(user);
+        console.log(user.userProfile);
+        let firstName = user.userProfile.firstName;
+        let lastName = user.userProfile.lastName;
+        let userBio = user.userProfile.userBio;
         return (
-          <ListItem key={index} avatar>
-            <Left>
+          <ListItem key={index}>
+            <Left style={styles.listItemLeft} avatar>
               <Thumbnail source={profileImage4} />
             </Left>
             <Body>
-              <Text>
-                {user.userProfile.firstName} {user.userProfile.lastName}
-              </Text>
-              <Text note>{user.userProfile.userBio}</Text>
+              <Text>{firstName + " " + lastName}</Text>
+              <Text note>{userBio}</Text>
             </Body>
             <Right>
               <Text note>3:43 pm</Text>
@@ -117,37 +105,7 @@ export default class JobPostingDetailsScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    display: "flex",
-    paddingTop: 45
-  },
-  matchesContainer: {
-    flex: 1,
-    display: "flex"
-  },
-  conversationsContainer: {
-    flex: 5,
-    display: "flex"
-  },
-  matchesComponent: {
-    flex: 1,
-    display: "flex",
-    borderTopColor: "#bbb",
-    borderTopWidth: 1,
-    borderBottomColor: "#bbb",
-    borderBottomWidth: 1,
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  matchesScrollView: {
-    flex: 1,
-    display: "flex"
-  },
-  thumbnail: {
-    marginRight: 15
-  },
-  jobPostingsSpinner: {
-    top: 20
+  listItemLeft: {
+    flex: 0.3
   }
 });

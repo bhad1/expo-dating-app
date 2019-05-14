@@ -60,8 +60,6 @@ export default class SignupScreen extends React.Component {
           .collection("users")
           .doc(cred.user.uid)
           .set({
-            firstName: "",
-            userBio: "",
             settings: {
               profilePublic: true,
               sliderOneValue: 22,
