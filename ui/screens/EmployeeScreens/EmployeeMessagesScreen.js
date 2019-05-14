@@ -12,9 +12,9 @@ import {
   Thumbnail,
   Text
 } from "native-base";
-
 import profileImage4 from "../../assets/images/robot-prod.png";
-export default class EmployerMatchesScreen extends React.Component {
+
+export default class EmployeeMessagesScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

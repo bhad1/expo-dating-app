@@ -7,10 +7,10 @@ import {
 
 import TabBarIcon from "../components/TabBarIcon";
 import EmployeeHomeScreen from "../screens/EmployeeScreens/EmployeeHomeScreen";
-import EmployeeMatchesScreen from "../screens/EmployeeScreens/EmployeeMatchesScreen";
+import EmployeeMessagesScreen from "../screens/EmployeeScreens/EmployeeMessagesScreen";
 import EmployeeSettingsScreen from "../screens/EmployeeScreens/EmployeeSettingsScreen";
 import EmployerHomeScreen from "../screens/EmployerScreens/EmployerHomeScreen";
-import EmployerMatchesScreen from "../screens/EmployerScreens/EmployerMatchesScreen";
+import EmployerMessagesScreen from "../screens/EmployerScreens/EmployerMessagesScreen";
 import EmployerSettingsScreen from "../screens/EmployerScreens/EmployerSettingsScreen";
 import CreateJobScreen from "../screens/EmployerScreens/CreateJobScreen";
 import JobPostingDetailsScreen from "../screens/EmployerScreens/JobPostingDetailsScreen";
@@ -36,12 +36,12 @@ EmployeeHomeStack.navigationOptions = {
   )
 };
 
-const EmployeeMatchesStack = createStackNavigator({
-  Matches: EmployeeMatchesScreen
+const EmployeeMessagesStack = createStackNavigator({
+  Messages: EmployeeMessagesScreen
 });
 
-EmployeeMatchesStack.navigationOptions = {
-  tabBarLabel: "Matches",
+EmployeeMessagesStack.navigationOptions = {
+  tabBarLabel: "Messages",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -94,12 +94,12 @@ EmployerHomeStack.navigationOptions = {
   )
 };
 
-const EmployerMatchesStack = createStackNavigator({
-  Matches: EmployerMatchesScreen
+const EmployerMessagesStack = createStackNavigator({
+  Messages: EmployerMessagesScreen
 });
 
-EmployerMatchesStack.navigationOptions = {
-  tabBarLabel: "Matches",
+EmployerMessagesStack.navigationOptions = {
+  tabBarLabel: "Messages",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -133,10 +133,10 @@ EmployerSettingsStack.navigationOptions = {
 export default createBottomTabNavigator(
   {
     EmployeeHomeStack,
-    EmployeeMatchesStack,
+    EmployeeMessagesStack,
     EmployeeSettingsStack,
     EmployerHomeStack,
-    EmployerMatchesStack,
+    EmployerMessagesStack,
     EmployerSettingsStack
   },
   {

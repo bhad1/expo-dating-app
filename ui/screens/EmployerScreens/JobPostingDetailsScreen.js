@@ -29,6 +29,10 @@ export default class JobPostingDetailsScreen extends React.Component {
     };
   }
 
+  static navigationOptions = {
+    title: "Job Details"
+  };
+
   async componentDidMount() {
     let usersThatSwipedOnPosting = [];
     this.setState({ spinner: true });
@@ -106,6 +110,6 @@ export default class JobPostingDetailsScreen extends React.Component {
 
 const styles = StyleSheet.create({
   listItemLeft: {
-    flex: 0.3
+    flex: 0.25
   }
 });

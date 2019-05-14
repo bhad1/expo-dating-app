@@ -40,10 +40,10 @@ class CustomTabBar extends React.Component {
                       <Text>2</Text>
                     </Badge>
                     <Icon name="home" />
-                    <Text>pooper</Text>
+                    <Text>Home</Text>
                   </Button>
                 );
-              case "EmployerMatchesStack":
+              case "EmployerMessagesStack":
                 return (
                   <Button
                     onPress={() => this.navigationHandler(route.routeName)}
@@ -56,7 +56,7 @@ class CustomTabBar extends React.Component {
                       <Text>2</Text>
                     </Badge>
                     <Icon name="md-person" />
-                    <Text>Matches</Text>
+                    <Text>Messages</Text>
                   </Button>
                 );
               case "EmployerSettingsStack":
@@ -94,7 +94,7 @@ class CustomTabBar extends React.Component {
                     <Text>poop</Text>
                   </Button>
                 );
-              case "EmployeeMatchesStack":
+              case "EmployeeMessagesStack":
                 return (
                   <Button
                     onPress={() => this.navigationHandler(route.routeName)}
@@ -107,7 +107,7 @@ class CustomTabBar extends React.Component {
                       <Text>2</Text>
                     </Badge>
                     <Icon name="md-person" />
-                    <Text>Matches</Text>
+                    <Text>Messages</Text>
                   </Button>
                 );
               case "EmployeeSettingsStack":
