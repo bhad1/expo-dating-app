@@ -15,10 +15,11 @@ import {
   Item,
   Input,
   Toast,
-  Spinner
+  Spinner,
+  H3
 } from "native-base";
 
-import { WebBrowser } from "expo";
+import { WebBrowser, ImagePicker, Permissions } from "expo";
 import SwiperComponent from "../../components/SwiperComponent";
 import { MonoText } from "../../components/StyledText";
 import { connect } from "react-redux";
@@ -50,7 +51,8 @@ class EmployeeHomeScreen extends React.Component {
       userBio: "",
       pastExperience: "",
       spinner: false,
-      showNoMoreJobsText: false
+      showNoMoreJobsText: false,
+      image: "https://via.placeholder.com/200x200?text=Please+Upload+Picture"
     };
 
     // there is no way to make it go straight to employer homepage on login
@@ -95,6 +97,7 @@ class EmployeeHomeScreen extends React.Component {
         "userProfile.pastExperience": this.state.pastExperience
       })
       .then(async docRef => {
+        await this.uploadImage(this.state.image);
         Toast.show({
           text: "Profile Created"
         });
@@ -110,7 +113,20 @@ class EmployeeHomeScreen extends React.Component {
 
   renderModalContent = () => (
     <View style={styles.modalContent}>
-      <Text>Create Profile</Text>
+      <H3>Create Profile</H3>
+      <View style={styles.uploadPicContainer}>
+        {/* <Image source={require({this.state.image})} /> */}
+        <Image
+          source={{ uri: this.state.image }}
+          resizeMode="stretch"
+          style={styles.profilePic}
+        />
+        {/* <Image source={{ uri: this.state.image }} /> */}
+
+        <Button onPress={() => this.onChoosePic()}>
+          <Text>Upload Pic</Text>
+        </Button>
+      </View>
       <Form>
         <Item>
           <Input
@@ -141,6 +157,7 @@ class EmployeeHomeScreen extends React.Component {
           />
         </Item>
       </Form>
+
       <View style={styles.CreateJobButtonContainer}>
         <Button onPress={() => this.createProfile(this.props.userId)}>
           <Text>Create Profile</Text>
@@ -148,6 +165,36 @@ class EmployeeHomeScreen extends React.Component {
       </View>
     </View>
   );
+
+  // When "Choose" is pressed, we show the user's image library
+  // so they may show a photo from disk inside the image view.
+  onChoosePic = async () => {
+    const permission = await Permissions.getAsync(Permissions.CAMERA_ROLL);
+    if (permission.status !== "granted") {
+      const newPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (newPermission.status === "granted") {
+        //its granted.
+      }
+    } else {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [4, 3]
+      });
+
+      if (!result.cancelled) {
+        await this.setState({ image: result.uri });
+      }
+    }
+  };
+  uploadImage = async uri => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("profilePictures/" + this.props.userId);
+    return ref.put(blob);
+  };
 
   getUser = async userId => {
     let jobsAlreadySwipedOn = [];
@@ -359,6 +406,15 @@ const styles = StyleSheet.create({
   },
   spinner: {
     top: 20
+  },
+  uploadPicContainer: {
+    display: "flex",
+    flex: 1
+  },
+  profilePic: {
+    flex: 1,
+    width: undefined,
+    height: undefined
   },
   noMoreJobsText: {
     top: 50

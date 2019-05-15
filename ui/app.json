@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "expo-dating-app",
+    "name": "Signal",
     "description": "A very interesting project.",
-    "slug": "expo-dating-app",
+    "slug": "signal",
     "privacy": "public",
     "sdkVersion": "30.0.0",
     "platforms": [

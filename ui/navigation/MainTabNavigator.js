@@ -9,6 +9,7 @@ import TabBarIcon from "../components/TabBarIcon";
 import EmployeeHomeScreen from "../screens/EmployeeScreens/EmployeeHomeScreen";
 import EmployeeMessagesScreen from "../screens/EmployeeScreens/EmployeeMessagesScreen";
 import EmployeeSettingsScreen from "../screens/EmployeeScreens/EmployeeSettingsScreen";
+import EmployeeProfileScreen from "../screens/EmployeeScreens/EmployeeProfileScreen";
 import EmployerHomeScreen from "../screens/EmployerScreens/EmployerHomeScreen";
 import EmployerMessagesScreen from "../screens/EmployerScreens/EmployerMessagesScreen";
 import EmployerSettingsScreen from "../screens/EmployerScreens/EmployerSettingsScreen";
@@ -77,7 +78,8 @@ EmployeeSettingsStack.navigationOptions = {
 const EmployerHomeStack = createStackNavigator({
   Home: EmployerHomeScreen,
   CreateJobScreen: CreateJobScreen,
-  JobPostingDetailsScreen: JobPostingDetailsScreen
+  JobPostingDetailsScreen: JobPostingDetailsScreen,
+  EmployeeProfileScreen: EmployeeProfileScreen
 });
 
 EmployerHomeStack.navigationOptions = {

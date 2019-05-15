@@ -49,7 +49,9 @@ export default class JobPostingDetailsScreen extends React.Component {
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(async doc => {
-          usersThatSwipedOnPosting.push(doc.data());
+          usersThatSwipedOnPosting.push(
+            Object.assign({ userId: doc.id }, doc.data().userProfile)
+          );
         });
         this.setState({ usersThatSwipedOnPosting: usersThatSwipedOnPosting });
       })
@@ -61,14 +63,19 @@ export default class JobPostingDetailsScreen extends React.Component {
 
   displayUsersThatSwipedOnPosting = () => {
     if (this.state.usersThatSwipedOnPosting.length) {
-      return this.state.usersThatSwipedOnPosting.map((user, index) => {
-        console.log(user);
-        console.log(user.userProfile);
-        let firstName = user.userProfile.firstName;
-        let lastName = user.userProfile.lastName;
-        let userBio = user.userProfile.userBio;
+      return this.state.usersThatSwipedOnPosting.map((userProfile, index) => {
+        let firstName = userProfile.firstName;
+        let lastName = userProfile.lastName;
+        let userBio = userProfile.userBio;
         return (
-          <ListItem key={index}>
+          <ListItem
+            key={index}
+            onPress={() =>
+              this.props.navigation.push("EmployeeProfileScreen", {
+                userProfile: userProfile
+              })
+            }
+          >
             <Left style={styles.listItemLeft} avatar>
               <Thumbnail source={profileImage4} />
             </Left>
