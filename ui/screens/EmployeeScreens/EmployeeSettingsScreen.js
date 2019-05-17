@@ -24,7 +24,8 @@ const db = firebase.firestore();
 
 const mapStateToProps = state => {
   return {
-    userId: state.userId
+    userId: state.userId,
+    userSettings: state.userSettings
   };
 };
 
@@ -32,16 +33,39 @@ class EmployeeSettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      profilePublic: true,
-      sliderOneChanging: false,
-      sliderOneValue: 0,
-      sliderTwoValue: 0,
-      genderShownSelection: "Women"
+      profilePublic: this.props.userSettings.profilePublic,
+      sliderOneValue: this.props.userSettings.sliderOneValue,
+      sliderTwoValue: this.props.userSettings.sliderTwoValue,
+      genderShownSelection: this.props.userSettings.genderShownSelection,
+      sliderOneChanging: false
     };
   }
   static navigationOptions = {
     title: "Settings"
   };
+
+  async componentDidMount() {
+    //get user by userId that we set in redux on login
+    // await db
+    //   .collection("users")
+    //   .where(firebase.firestore.FieldPath.documentId(), "==", this.props.userId)
+    //   .get()
+    //   .then(querySnapshot => {
+    //     querySnapshot.forEach(async doc => {
+    //       let userSettings = doc.data().settings;
+    //       await this.setState({
+    //         profilePublic: userSettings.profilePublic,
+    //         sliderOneValue: userSettings.sliderOneValue,
+    //         sliderTwoValue: userSettings.sliderTwoValue,
+    //         genderShownSelection: userSettings.genderShownSelection
+    //       });
+    //       console.log(this.state.genderShownSelection);
+    //     });
+    //   })
+    //   .catch(function(error) {
+    //     console.log("Error getting documents: ", error);
+    //   });
+  }
 
   updateProfilePublicApiCall = userId => {
     db.collection("users")
@@ -91,29 +115,6 @@ class EmployeeSettingsScreen extends React.Component {
     this.updateGenderApiCall,
     1000
   );
-
-  async componentDidMount() {
-    //get user by userId that we set in redux on login
-    await db
-      .collection("users")
-      .where(firebase.firestore.FieldPath.documentId(), "==", this.props.userId)
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(async doc => {
-          let userSettings = doc.data().settings;
-          await this.setState({
-            profilePublic: userSettings.profilePublic,
-            sliderOneValue: userSettings.sliderOneValue,
-            sliderTwoValue: userSettings.sliderTwoValue,
-            genderShownSelection: userSettings.genderShownSelection
-          });
-          console.log(this.state.genderShownSelection);
-        });
-      })
-      .catch(function(error) {
-        console.log("Error getting documents: ", error);
-      });
-  }
 
   onToggleSwitch = () => {
     this.setState({ profilePublic: !this.state.profilePublic });
