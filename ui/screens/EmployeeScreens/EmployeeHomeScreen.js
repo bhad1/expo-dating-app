@@ -25,6 +25,11 @@ import { MonoText } from "../../components/StyledText";
 import { connect } from "react-redux";
 import { get } from "geofirex";
 import Modal from "react-native-modal";
+import {
+  setUser,
+  setJobsSwipedRightOn,
+  setUserSettings
+} from "../../redux/app-redux";
 
 import { firebase, db, geo } from "../../firebase";
 
@@ -35,6 +40,20 @@ const mapStateToProps = state => {
     isEmployer: state.isEmployer,
     userLocation: state.userLocation,
     userId: state.userId
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setUser: user => {
+      dispatch(setUser(user));
+    },
+    setJobsSwipedRightOn: jobsSwipedRightOn => {
+      dispatch(setJobsSwipedRightOn(jobsSwipedRightOn));
+    },
+    setUserSettings: userSettings => {
+      dispatch(setUserSettings(userSettings));
+    }
   };
 };
 
@@ -196,13 +215,26 @@ class EmployeeHomeScreen extends React.Component {
     return ref.put(blob);
   };
 
+  setUserRedux = user => {
+    this.props.setUser(user);
+  };
+  setJobsSwipedRightOnRedux = jobsSwipedRightOn => {
+    this.props.setJobsSwipedRightOn(jobsSwipedRightOn);
+  };
+  setUserSettingsRedux = userSettings => {
+    this.props.setUserSettings(userSettings);
+  };
+
   getUser = async userId => {
     let jobsAlreadySwipedOn = [];
     await db
       .collection("users")
       .doc(userId)
       .get()
-      .then(doc => {
+      .then(async doc => {
+        // this.setUserRedux(doc.data());
+        this.setJobsSwipedRightOnRedux(doc.data().jobsThatUserSwipedRightOn);
+        this.setUserSettingsRedux(doc.data().settings);
         if (doc.data().jobsThatUserSwipedLeftOn) {
           jobsAlreadySwipedOn.push(...doc.data().jobsThatUserSwipedLeftOn);
         }
@@ -264,6 +296,7 @@ class EmployeeHomeScreen extends React.Component {
         <SwiperComponent
           jobs={this.state.jobs}
           onFinishedSwiping={this.onFinishedSwiping}
+          setJobsSwipedRightOnRedux={this.setJobsSwipedRightOnRedux}
         />
       );
     }
@@ -299,7 +332,10 @@ class EmployeeHomeScreen extends React.Component {
   }
 }
 
-export default connect(mapStateToProps)(EmployeeHomeScreen);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EmployeeHomeScreen);
 
 const styles = StyleSheet.create({
   employeeHomeScreenContainer: {

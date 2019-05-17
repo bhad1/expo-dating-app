@@ -30,6 +30,15 @@ const mapStateToProps = state => {
     userId: state.userId
   };
 };
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setUser: user => {
+      dispatch(setUser(user));
+    }
+  };
+};
+
 let jobsThatUserSwipedRightOn = ["default"];
 let jobsThatUserSwipedLeftOn = ["default"];
 class SwiperComponent extends React.Component {

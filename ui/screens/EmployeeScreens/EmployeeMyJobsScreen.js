@@ -13,13 +13,21 @@ import {
   Text,
   H3
 } from "native-base";
+import { connect } from "react-redux";
+
 import profileImage4 from "../../assets/images/robot-prod.png";
 
-export default class EmployeeMyJobsScreen extends React.Component {
+const mapStateToProps = state => {
+  return {
+    jobsSwipedRightOn: state.jobsSwipedRightOn
+  };
+};
+
+class EmployeeMyJobsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      jobsLiked: [],
+      jobsLiked: [...this.props.jobsSwipedRightOn],
       jobsAppliedFor: []
     };
   }
@@ -41,15 +49,18 @@ export default class EmployeeMyJobsScreen extends React.Component {
             <Container>
               <Content>
                 <List>
-                  {this.state.jobsLiked.map((conversation, index) => {
+                  {this.state.jobsLiked.map((job, index) => {
+                    if (job === "default") {
+                      return;
+                    }
                     return (
                       <ListItem key={index} avatar>
                         <Left>
                           <Thumbnail source={profileImage4} />
                         </Left>
                         <Body>
-                          <Text>{conversation.name}</Text>
-                          <Text note>{conversation.text}</Text>
+                          <Text>{job.company}</Text>
+                          <Text note>{job.jobDescription}</Text>
                         </Body>
                         <Right>
                           <Text note>3:43 pm</Text>
@@ -95,6 +106,8 @@ export default class EmployeeMyJobsScreen extends React.Component {
     );
   }
 }
+
+export default connect(mapStateToProps)(EmployeeMyJobsScreen);
 
 const styles = StyleSheet.create({
   container: {
