@@ -40,7 +40,7 @@ class CustomTabBar extends React.Component {
                       <Text>2</Text>
                     </Badge>
                     <Icon name="home" />
-                    <Text>Home</Text>
+                    <Text style={styles.tabText}>Home</Text>
                   </Button>
                 );
               case "EmployerMessagesStack":
@@ -56,7 +56,7 @@ class CustomTabBar extends React.Component {
                       <Text>2</Text>
                     </Badge>
                     <Icon name="md-person" />
-                    <Text>Messages</Text>
+                    <Text style={styles.tabText}>Messages</Text>
                   </Button>
                 );
               case "EmployerSettingsStack":
@@ -72,7 +72,7 @@ class CustomTabBar extends React.Component {
                       <Text>2</Text>
                     </Badge>
                     <Icon name="settings" />
-                    <Text>Settings</Text>
+                    <Text style={styles.tabText}>Settings</Text>
                   </Button>
                 );
             }
@@ -91,7 +91,23 @@ class CustomTabBar extends React.Component {
                       <Text>2</Text>
                     </Badge>
                     <Icon name="home" />
-                    <Text>poop</Text>
+                    <Text style={styles.tabText}>Home</Text>
+                  </Button>
+                );
+              case "EmployeeMyJobsStack":
+                return (
+                  <Button
+                    onPress={() => this.navigationHandler(route.routeName)}
+                    style={styles.tabItem}
+                    badge
+                    vertical
+                    key={index}
+                  >
+                    <Badge>
+                      <Text>2</Text>
+                    </Badge>
+                    <Icon name="contacts" />
+                    <Text style={styles.tabText}>My Jobs</Text>
                   </Button>
                 );
               case "EmployeeMessagesStack":
@@ -107,7 +123,7 @@ class CustomTabBar extends React.Component {
                       <Text>2</Text>
                     </Badge>
                     <Icon name="md-person" />
-                    <Text>Messages</Text>
+                    <Text style={styles.tabText}>Messages</Text>
                   </Button>
                 );
               case "EmployeeSettingsStack":
@@ -123,7 +139,7 @@ class CustomTabBar extends React.Component {
                       <Text>2</Text>
                     </Badge>
                     <Icon name="settings" />
-                    <Text>Settings</Text>
+                    <Text style={styles.tabText}>Settings</Text>
                   </Button>
                 );
             }
@@ -148,6 +164,9 @@ const styles = StyleSheet.create({
   },
   tabItem: {
     flex: 1
+  },
+  tabText: {
+    fontSize: 13
   }
 });
 

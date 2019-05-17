@@ -239,7 +239,11 @@ class EmployeeHomeScreen extends React.Component {
   };
 
   filterOutJobsAlreadySwipedOn = (jobs, jobsAlreadySwipedOn) => {
-    return jobs.filter(val => !jobsAlreadySwipedOn.includes(val.id));
+    let jobsAlreadySwipedOnIds = [];
+    jobsAlreadySwipedOn.map(jobAlreadySwipedOn => {
+      jobsAlreadySwipedOnIds.push(jobAlreadySwipedOn.jobId);
+    });
+    return jobs.filter(val => !jobsAlreadySwipedOnIds.includes(val.id));
   };
 
   onFinishedSwiping = () => {

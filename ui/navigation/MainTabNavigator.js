@@ -7,6 +7,7 @@ import {
 
 import TabBarIcon from "../components/TabBarIcon";
 import EmployeeHomeScreen from "../screens/EmployeeScreens/EmployeeHomeScreen";
+import EmployeeMyJobsScreen from "../screens/EmployeeScreens/EmployeeMyJobsScreen";
 import EmployeeMessagesScreen from "../screens/EmployeeScreens/EmployeeMessagesScreen";
 import EmployeeSettingsScreen from "../screens/EmployeeScreens/EmployeeSettingsScreen";
 import EmployeeProfileScreen from "../screens/EmployeeScreens/EmployeeProfileScreen";
@@ -32,6 +33,24 @@ EmployeeHomeStack.navigationOptions = {
         Platform.OS === "ios"
           ? `ios-information-circle${focused ? "" : "-outline"}`
           : "md-information-circle"
+      }
+    />
+  )
+};
+
+const EmployeeMyJobsStack = createStackNavigator({
+  Messages: EmployeeMyJobsScreen
+});
+
+EmployeeMyJobsStack.navigationOptions = {
+  tabBarLabel: "My Jobs",
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === "ios"
+          ? `ios-link${focused ? "" : "-outline"}`
+          : "md-link"
       }
     />
   )
@@ -135,6 +154,7 @@ EmployerSettingsStack.navigationOptions = {
 export default createBottomTabNavigator(
   {
     EmployeeHomeStack,
+    EmployeeMyJobsStack,
     EmployeeMessagesStack,
     EmployeeSettingsStack,
     EmployerHomeStack,

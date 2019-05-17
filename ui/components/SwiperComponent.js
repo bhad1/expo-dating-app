@@ -44,7 +44,11 @@ class SwiperComponent extends React.Component {
   };
 
   onRightSwipe = async cardIndex => {
-    jobsThatUserSwipedRightOn.push(this.props.jobs[cardIndex].id);
+    jobsThatUserSwipedRightOn.push({
+      jobId: this.props.jobs[cardIndex].id,
+      company: this.props.jobs[cardIndex].company,
+      jobDescription: this.props.jobs[cardIndex].jobDescription
+    });
     this.recordSwipingInDBApiCallDebounced(
       this.props.jobs[cardIndex].id,
       this.props.userId
@@ -52,7 +56,9 @@ class SwiperComponent extends React.Component {
   };
 
   onLeftSwipe = async cardIndex => {
-    jobsThatUserSwipedLeftOn.push(this.props.jobs[cardIndex].id);
+    jobsThatUserSwipedLeftOn.push({
+      jobId: this.props.jobs[cardIndex].id
+    });
     this.recordSwipingInDBApiCallDebounced(
       this.props.jobs[cardIndex].id,
       this.props.userId
@@ -80,7 +86,7 @@ class SwiperComponent extends React.Component {
 
   recordSwipingInDBApiCallDebounced = AwesomeDebouncePromise(
     this.recordSwipingInDBApiCall,
-    2000
+    1000
   );
 
   render() {
