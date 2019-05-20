@@ -37,6 +37,8 @@ class EmployerHomeScreen extends React.Component {
   };
 
   async componentDidMount() {
+    //employeeHomeScreen gets the user object and sets in in redux here so its grabbed in redux in settingsScreen,
+    //but we dont need user object anywhere really so we dont do that here
     let employersJobPostings = [];
     this.setState({ spinner: true });
     //get user by userId that we set in redux on login

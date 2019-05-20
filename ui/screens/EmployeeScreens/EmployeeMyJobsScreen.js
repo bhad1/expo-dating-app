@@ -14,6 +14,7 @@ import {
   H3
 } from "native-base";
 import { connect } from "react-redux";
+import { store } from "../../redux/app-redux";
 
 import profileImage4 from "../../assets/images/robot-prod.png";
 
@@ -27,7 +28,7 @@ class EmployeeMyJobsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      jobsLiked: [...this.props.jobsSwipedRightOn],
+      jobsLiked: this.props.jobsSwipedRightOn,
       jobsAppliedFor: []
     };
   }
@@ -36,7 +37,21 @@ class EmployeeMyJobsScreen extends React.Component {
     header: null
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener("didFocus", () => {
+      // The screen is focused
+      // Call any action
+      this.setState({
+        jobsLiked: this.props.jobsSwipedRightOn
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    // Remove the event listener
+    this.focusListener.remove();
+  }
 
   render() {
     return (

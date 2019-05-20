@@ -27,7 +27,8 @@ const { width, height } = Dimensions.get("window");
 
 const mapStateToProps = state => {
   return {
-    userId: state.userId
+    userId: state.userId,
+    jobsSwipedRightOn: state.jobsSwipedRightOn
   };
 };
 
@@ -39,18 +40,25 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-let jobsThatUserSwipedRightOn = ["default"];
+let jobsThatUserSwipedRightOn = [];
 let jobsThatUserSwipedLeftOn = ["default"];
 class SwiperComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      jobsThatUserSwipedRightOn: []
+      jobsThatUserSwipedRightOn: this.props.jobsSwipedRightOn
     };
   }
   static navigationOptions = {
     header: null
   };
+
+  componentDidMount() {
+    jobsThatUserSwipedRightOn = this.props.jobsSwipedRightOn;
+    if (!jobsThatUserSwipedRightOn.length) {
+      jobsThatUserSwipedRightOn = ["default"];
+    }
+  }
 
   onRightSwipe = async cardIndex => {
     jobsThatUserSwipedRightOn.push({
@@ -65,7 +73,7 @@ class SwiperComponent extends React.Component {
   };
 
   onLeftSwipe = async cardIndex => {
-    jobsThatUserSwipedLeftOn.push({
+    this.jobsThatUserSwipedLeftOn.push({
       jobId: this.props.jobs[cardIndex].id
     });
     this.recordSwipingInDBApiCallDebounced(
@@ -88,8 +96,9 @@ class SwiperComponent extends React.Component {
           ...jobsThatUserSwipedLeftOn
         )
       })
-      .then(function() {
+      .then(() => {
         console.log("Swipe was recorded in users collection");
+        this.props.setJobsSwipedRightOnRedux(jobsThatUserSwipedRightOn);
       });
   };
 
