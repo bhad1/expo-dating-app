@@ -232,14 +232,13 @@ class EmployeeHomeScreen extends React.Component {
       .doc(userId)
       .get()
       .then(async doc => {
-        // this.setUserRedux(doc.data());
-        this.setJobsSwipedRightOnRedux(doc.data().jobsThatUserSwipedRightOn);
+        this.setJobsSwipedRightOnRedux(doc.data().jobsSwipedRightOn);
         this.setUserSettingsRedux(doc.data().settings);
-        if (doc.data().jobsThatUserSwipedLeftOn) {
-          jobsAlreadySwipedOn.push(...doc.data().jobsThatUserSwipedLeftOn);
+        if (doc.data().jobsSwipedLeftOn) {
+          jobsAlreadySwipedOn.push(...doc.data().jobsSwipedLeftOn);
         }
-        if (doc.data().jobsThatUserSwipedRightOn) {
-          jobsAlreadySwipedOn.push(...doc.data().jobsThatUserSwipedRightOn);
+        if (doc.data().jobsSwipedRightOn) {
+          jobsAlreadySwipedOn.push(...doc.data().jobsSwipedRightOn);
         }
         if (doc.data().userProfile) {
           this.setState({ userProfile: doc.data().userProfile });

@@ -40,28 +40,25 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-let jobsThatUserSwipedRightOn = [];
-let jobsThatUserSwipedLeftOn = ["default"];
+let jobsSwipedRightOn = [];
+// must have something in array or firebase arrayUnion will throw error
+// jobsSwipedRightOn is set from redux in componentDidMount
+let jobsSwipedLeftOn = ["default"];
 class SwiperComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      jobsThatUserSwipedRightOn: this.props.jobsSwipedRightOn
-    };
+    this.state = {};
   }
   static navigationOptions = {
     header: null
   };
 
   componentDidMount() {
-    jobsThatUserSwipedRightOn = this.props.jobsSwipedRightOn;
-    if (!jobsThatUserSwipedRightOn.length) {
-      jobsThatUserSwipedRightOn = ["default"];
-    }
+    jobsSwipedRightOn = this.props.jobsSwipedRightOn;
   }
 
   onRightSwipe = async cardIndex => {
-    jobsThatUserSwipedRightOn.push({
+    jobsSwipedRightOn.push({
       jobId: this.props.jobs[cardIndex].id,
       company: this.props.jobs[cardIndex].company,
       jobDescription: this.props.jobs[cardIndex].jobDescription
@@ -73,7 +70,7 @@ class SwiperComponent extends React.Component {
   };
 
   onLeftSwipe = async cardIndex => {
-    this.jobsThatUserSwipedLeftOn.push({
+    this.jobsSwipedLeftOn.push({
       jobId: this.props.jobs[cardIndex].id
     });
     this.recordSwipingInDBApiCallDebounced(
@@ -82,23 +79,23 @@ class SwiperComponent extends React.Component {
     );
   };
 
-  // We do one api call for both jobsThatUserSwipedRightOn and jobsThatUserSwipedLeftOn, even if one
+  // We do one api call for both jobsSwipedRightOn and jobsSwipedLeftOn, even if one
   // array is empty because we want to debounce one api call vs two and have less writes.
   // We have the 'default' value in the array because it will throw an error if its empty
   recordSwipingInDBApiCall = (jobId, userId) => {
     db.collection("users")
       .doc(userId)
       .update({
-        jobsThatUserSwipedRightOn: firebase.firestore.FieldValue.arrayUnion(
-          ...jobsThatUserSwipedRightOn
+        jobsSwipedRightOn: firebase.firestore.FieldValue.arrayUnion(
+          ...jobsSwipedRightOn
         ),
-        jobsThatUserSwipedLeftOn: firebase.firestore.FieldValue.arrayUnion(
-          ...jobsThatUserSwipedLeftOn
+        jobsSwipedLeftOn: firebase.firestore.FieldValue.arrayUnion(
+          ...jobsSwipedLeftOn
         )
       })
       .then(() => {
         console.log("Swipe was recorded in users collection");
-        this.props.setJobsSwipedRightOnRedux(jobsThatUserSwipedRightOn);
+        this.props.setJobsSwipedRightOnRedux(jobsSwipedRightOn);
       });
   };
 

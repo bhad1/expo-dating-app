@@ -39,9 +39,9 @@ export default class JobPostingDetailsScreen extends React.Component {
     await db
       .collection("users")
       // get all users that have swiped right on this job by
-      // checking if the jobsThatUserSwipedRightOn array contains this jobs Id
+      // checking if the jobsSwipedRightOn array contains this jobs Id
       .where(
-        "jobsThatUserSwipedRightOn",
+        "jobsSwipedRightOn",
         "array-contains",
         this.props.navigation.getParam("jobId")
       )

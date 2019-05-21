@@ -53,6 +53,59 @@ class EmployeeMyJobsScreen extends React.Component {
     this.focusListener.remove();
   }
 
+  displayJobsSwipedRightOn = () => {
+    if (this.state.jobsLiked.length > 1) {
+      {
+        return this.state.jobsLiked.map((job, index) => {
+          if (job === "default") {
+            return;
+          }
+          return (
+            <ListItem key={index} avatar>
+              <Left>
+                <Thumbnail source={profileImage4} />
+              </Left>
+              <Body>
+                <Text>{job.company}</Text>
+                <Text note>{job.jobDescription}</Text>
+              </Body>
+              <Right>
+                <Text note>3:43 pm</Text>
+              </Right>
+            </ListItem>
+          );
+        });
+      }
+    } else {
+      return <Text>You have not liked a job yet</Text>;
+    }
+  };
+
+  displayJobsAppliedFor = () => {
+    if (this.state.jobsAppliedFor.length > 1) {
+      {
+        return this.state.jobsAppliedFor.map((job, index) => {
+          return (
+            <ListItem key={index} avatar>
+              <Left>
+                <Thumbnail source={profileImage4} />
+              </Left>
+              <Body>
+                <Text>{job.name}</Text>
+                <Text note>{job.text}</Text>
+              </Body>
+              <Right>
+                <Text note>5:23 pm</Text>
+              </Right>
+            </ListItem>
+          );
+        });
+      }
+    } else {
+      return <Text>You have not applied for a job yet</Text>;
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -63,27 +116,7 @@ class EmployeeMyJobsScreen extends React.Component {
           <ScrollView>
             <Container>
               <Content>
-                <List>
-                  {this.state.jobsLiked.map((job, index) => {
-                    if (job === "default") {
-                      return;
-                    }
-                    return (
-                      <ListItem key={index} avatar>
-                        <Left>
-                          <Thumbnail source={profileImage4} />
-                        </Left>
-                        <Body>
-                          <Text>{job.company}</Text>
-                          <Text note>{job.jobDescription}</Text>
-                        </Body>
-                        <Right>
-                          <Text note>3:43 pm</Text>
-                        </Right>
-                      </ListItem>
-                    );
-                  })}
-                </List>
+                <List> {this.displayJobsSwipedRightOn()}</List>
               </Content>
             </Container>
           </ScrollView>
@@ -95,24 +128,7 @@ class EmployeeMyJobsScreen extends React.Component {
           <ScrollView>
             <Container>
               <Content>
-                <List>
-                  {this.state.jobsAppliedFor.map((conversation, index) => {
-                    return (
-                      <ListItem key={index} avatar>
-                        <Left>
-                          <Thumbnail source={profileImage4} />
-                        </Left>
-                        <Body>
-                          <Text>{conversation.name}</Text>
-                          <Text note>{conversation.text}</Text>
-                        </Body>
-                        <Right>
-                          <Text note>3:43 pm</Text>
-                        </Right>
-                      </ListItem>
-                    );
-                  })}
-                </List>
+                <List>{this.displayJobsAppliedFor()}</List>
               </Content>
             </Container>
           </ScrollView>

@@ -65,7 +65,9 @@ export default class SignupScreen extends React.Component {
               sliderOneValue: 22,
               sliderTwoValue: 34,
               genderShownSelection: "Men"
-            }
+            },
+            jobsSwipedRightOn: ["default"],
+            jobsSwipedLeftOn: ["default"]
           });
       })
       .then(() => {
